@@ -1,0 +1,29 @@
+{
+  "canisters": {
+    "oasis_backend": {
+      "main": "src/oasis_backend/main.mo",
+      "type": "motoko"
+    },
+    "oasis_frontend": {
+      "dependencies": [
+        "oasis_backend"
+      ],
+      "frontend": {
+        "entrypoint": "src/oasis_frontend/src/index.html"
+      },
+      "source": [
+        "src/oasis_frontend/assets",
+        "dist/oasis_frontend/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}

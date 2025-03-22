@@ -1,0 +1,47 @@
+.aside-active {
+    border-left: 3px #fe570b solid;
+    font-weight: 600;
+    color: #fe570b
+}
+
+* {
+    -ms-overflow-style: none !important;
+    -webkit-scrollbar: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: #0d0101;
+}
+
+.ant-tabs-ink-bar {
+    background: #fe570b !important;
+}
+
+.ant-tabs-tab-btn {
+    color: #fff !important;
+    transition: all 0.3s ease-in-out;
+}
+
+.ant-tabs-tab-btn[aria-selected="true"] {
+    color: #fff !important;
+    font-weight: 600 !important;
+}
+
+.ant-select-selector {
+    background: #222222 !important;
+}
+
+.ant-btn.ant-btn-primary {
+    background-color: #1677ff !important;
+}
+
+.ant-result-success .ant-result-icon>.anticon,
+.ant-result-warning .ant-result-icon>.anticon {
+    color: #fe570b !important;
+}

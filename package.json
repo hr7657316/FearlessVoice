@@ -1,0 +1,82 @@
+{
+  "name": "oasis_frontend",
+  "version": "0.2.0",
+  "description": "Internet Computer starter application",
+  "keywords": [
+    "Internet Computer",
+    "Motoko",
+    "JavaScript",
+    "Canister"
+  ],
+  "scripts": {
+    "build": "webpack",
+    "prebuild": "dfx generate",
+    "start": "webpack serve --mode development --env development",
+    "deploy:local": "dfx deploy --network=local",
+    "deploy:ic": "dfx deploy --network=ic",
+    "generate": "dfx generate oasis_backend"
+  },
+  "dependencies": {
+    "@dfinity/agent": "^0.16.0",
+    "@dfinity/auth-client": "^2.3.0",
+    "@dfinity/candid": "^0.16.0",
+    "@dfinity/identity": "^2.3.0",
+    "@dfinity/principal": "^0.16.0",
+    "antd": "^5.6.3",
+    "babel-preset-react-hmre": "^1.1.1",
+    "css-loader": "^6.8.1",
+    "dayjs": "^1.11.9",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-ic-wallet": "^0.4.0",
+    "react-icons": "^4.10.1",
+    "react-router-dom": "^6.14.1",
+    "style-loader": "^3.3.3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.22.5",
+    "@babel/core": "^7.22.5",
+    "@babel/eslint-parser": "^7.22.5",
+    "@babel/plugin-transform-runtime": "^7.22.5",
+    "@babel/preset-env": "^7.22.5",
+    "@babel/preset-react": "^7.22.5",
+    "@babel/runtime": "^7.22.5",
+    "assert": "2.0.0",
+    "autoprefixer": "^10.4.14",
+    "babel-loader": "^9.1.2",
+    "babel-plugin-lodash": "^3.3.2",
+    "babel-plugin-react-transform": "^3.0.0",
+    "buffer": "6.0.3",
+    "copy-webpack-plugin": "^11.0.0",
+    "dotenv": "^16.0.3",
+    "eslint": "^8.44.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-jest": "^27.2.2",
+    "eslint-plugin-react": "^7.32.2",
+    "events": "3.3.0",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.0",
+    "path": "^0.12.7",
+    "postcss": "^8.4.24",
+    "postcss-loader": "^7.3.3",
+    "process": "0.11.10",
+    "stream-browserify": "3.0.0",
+    "svg-url-loader": "^8.0.0",
+    "tailwindcss": "^3.3.2",
+    "terser-webpack-plugin": "^5.3.3",
+    "util": "0.12.4",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.8.1"
+  },
+  "engines": {
+    "node": "^12 || ^14 || ^16 || ^18"
+  },
+  "browserslist": [
+    "last 2 chrome version",
+    "last 2 firefox version",
+    "last 2 safari version",
+    "last 2 edge version"
+  ]
+}
