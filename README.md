@@ -1,7 +1,8 @@
 # FearlessVoice
+<img width="1470" alt="Screenshot 2025-03-24 at 03 38 51" src="https://github.com/user-attachments/assets/8ac7cc7c-67c8-493c-b0ea-a5a35647ccd7" />
 
 <p align="center">
-  <img src="temp_logo/logo.png" alt="FearlessVoice Logo" width="200"/>
+ 
 </p>
 
 <p align="center">
