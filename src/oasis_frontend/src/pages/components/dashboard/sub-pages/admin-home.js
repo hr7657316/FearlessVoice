@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { useContext, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from 'react';
+import { useContext } from "react";
 import { GlobalContext } from "../../../../context/global-context";
-import { Popover, Result, Table, Tabs, Tag, Tooltip, Button, Card, Form, Input, message } from "antd";
+import { Popover, Result, Table, Tabs, Tag, Tooltip, Button, Card, Form, Input, message, Divider } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { oasis_backend } from '../../../../../../declarations/oasis_backend';
 import BadgeComponent from '../../badge';
@@ -46,9 +46,22 @@ const columns = [
 
 
 const filterArray = (array, key) => {
-    return array.filter((value, index) => {
-        return value.status == key;
-    })
+    return array.filter((value) => {
+        // Handle status text variations for both authentication methods
+        const status = value.status ? value.status.toLowerCase() : "";
+        
+        // Log status check for debugging
+        console.log(`Checking status '${status}' against key '${key}'`);
+        
+        if (key === 'new' && (status === 'new' || status === 'pending')) {
+            return true;
+        } else if (key === 'processing' && (status === 'processing' || status === 'under investigation')) {
+            return true;
+        } else if (key === 'resolved' && status === 'resolved') {
+            return true;
+        }
+        return false;
+    });
 }
 const AdminHome = () => {
     const { Aside, PageTitle, ReportedCases, Storage } = useContext(GlobalContext);
@@ -84,26 +97,91 @@ const AdminHome = () => {
                 setAdmin(true);
                 setViewPage('content');
                 
+                console.log("🔍 Admin status verified, fetching all users and their reports");
                 // Fetch all users and their reports
                 var resp = oasis_backend.fetchAllUsers();
                 resp.then(AllUsers => {
+                    console.log("🔍 Received all users data:", AllUsers);
                     setLoadData([]);
+                    
+                    if (!AllUsers || AllUsers.length === 0) {
+                        console.log("❌ No users found in the system");
+                        return;
+                    }
+                    
+                    let totalReportsProcessed = 0;
+                    
                     AllUsers.forEach((User, index) => {
+                        console.log(`🔍 Processing user ${index}:`, User);
+                        
+                        try {
+                            // Keep a copy of the user's phone before deleting properties
+                            const userPhone = User.phone;
+                            
                         delete User.id;
                         delete User.token;
                         delete User.userData;
-                        User.reportedAbuseCases = JSON.parse(User.reportedAbuseCases);
+                            
+                            // Safely parse the reported abuse cases
+                            let reportedCases = [];
+                            if (User.reportedAbuseCases) {
+                                try {
+                                    // Check if it's already an object or needs parsing
+                                    if (typeof User.reportedAbuseCases === 'string') {
+                                        reportedCases = JSON.parse(User.reportedAbuseCases);
+                                    } else {
+                                        reportedCases = User.reportedAbuseCases;
+                                    }
+                                    
+                                    console.log(`✅ Successfully parsed reportedAbuseCases for user ${index}:`, reportedCases);
+                                } catch (e) {
+                                    console.error(`❌ Error parsing reportedAbuseCases for user ${index}:`, e);
+                                    reportedCases = [];
+                                }
+                            }
+                            
+                            // Ensure it's an array
+                            if (!Array.isArray(reportedCases)) {
+                                console.error(`❌ reportedAbuseCases for user ${index} is not an array, setting to empty array`);
+                                reportedCases = [];
+                            }
+                            
+                            User.reportedAbuseCases = reportedCases;
+                            
                         if (User.reportedAbuseCases.length > 0) {
-                            User.reportedAbuseCases.forEach((Case, index) => {
-                                Case.phone = User.phone;
+                                console.log(`✅ User ${index} has ${User.reportedAbuseCases.length} reported cases`);
+                                totalReportsProcessed += User.reportedAbuseCases.length;
+                                
+                                User.reportedAbuseCases.forEach((Case, caseIndex) => {
+                                    console.log(`🔍 Processing case ${caseIndex} for user ${index}:`, Case);
+                                    
+                                    // Add the phone to the case object for reference
+                                    Case.phone = userPhone;
+                                    
+                                    // Map fields to expected names if they don't match
+                                    if (Case.incidentType && !Case.type) {
+                                        Case.type = Case.incidentType;
+                                    }
+                                    
+                                    if (Case.id === undefined) {
+                                        console.warn(`⚠️ Case ${caseIndex} has no ID, this may cause issues with viewing`);
+                                    }
+                                    
                                 setLoadData((prev) => {
                                     return [...prev, Case];
-                                })
-                            })
+                                    });
+                                });
+                            } else {
+                                console.log(`ℹ️ User ${index} has no reported cases`);
+                            }
+                        } catch (error) {
+                            console.error(`❌ Error processing user ${index}:`, error);
                         }
-                    })
+                    });
+                    
+                    console.log(`✅ Total reports processed: ${totalReportsProcessed}`);
                 }).catch(err => {
-                    console.error("Error fetching users:", err);
+                    console.error("❌ Error fetching users:", err);
                     setViewPage('error');
                 });
             } else {
@@ -111,7 +189,7 @@ const AdminHome = () => {
                 setViewPage('not-allowed');
             }
         }).catch(err => {
-            console.error("Error checking admin status:", err);
+            console.error("❌ Error checking admin status:", err);
             setAdmin(false);
             setViewPage('not-allowed');
         });
@@ -256,16 +334,18 @@ const AdminHome = () => {
                             )}
                         </Card>
                     
+                        <Divider />
+
                         <Tabs defaultActiveKey={defaultTab}>
                             <Tabs.TabPane tab="New" key="pending">
                                 <Table columns={columns} dataSource={filterArray(loadData, 'new').map((value, index) => {
                                     return {
                                         key: index,
-                                        name: value.name,
-                                        abuse_type: value.type,
-                                        location: value.location,
-                                        date: value.date,
-                                        status: <BadgeComponent type={value.status} />,
+                                        name: value.incidentTitle || value.name || "Anonymous Report",
+                                        abuse_type: value.incidentType || value.type || "Whistleblower Report",
+                                        location: value.organization || value.location || "Not specified",
+                                        date: value.submittedOn ? new Date(value.submittedOn).toLocaleDateString() : value.date || "Not specified",
+                                        status: <BadgeComponent text={value.status || "pending"} />,
                                         action: <button className='px-2 py-1 text-[#1677ff]' onClick={() => { handleView(value.id, value.phone) }}>View</button>
                                     }
                                 })} />
@@ -274,11 +354,11 @@ const AdminHome = () => {
                                 <Table columns={columns} dataSource={filterArray(loadData, 'processing').map((value, index) => {
                                     return {
                                         key: index,
-                                        name: value.name,
-                                        abuse_type: value.type,
-                                        location: value.location,
-                                        date: value.date,
-                                        status: <BadgeComponent type={value.status} />,
+                                        name: value.incidentTitle || value.name || "Anonymous Report",
+                                        abuse_type: value.incidentType || value.type || "Whistleblower Report",
+                                        location: value.organization || value.location || "Not specified",
+                                        date: value.submittedOn ? new Date(value.submittedOn).toLocaleDateString() : value.date || "Not specified",
+                                        status: <BadgeComponent text={value.status || "pending"} />,
                                         action: <button className='px-2 py-1 text-[#1677ff]' onClick={() => { handleView(value.id, value.phone) }}>View</button>
                                     }
                                 })} />
@@ -287,11 +367,11 @@ const AdminHome = () => {
                                 <Table columns={columns} dataSource={filterArray(loadData, 'resolved').map((value, index) => {
                                     return {
                                         key: index,
-                                        name: value.name,
-                                        abuse_type: value.type,
-                                        location: value.location,
-                                        date: value.date,
-                                        status: <BadgeComponent type={value.status} />,
+                                        name: value.incidentTitle || value.name || "Anonymous Report",
+                                        abuse_type: value.incidentType || value.type || "Whistleblower Report",
+                                        location: value.organization || value.location || "Not specified",
+                                        date: value.submittedOn ? new Date(value.submittedOn).toLocaleDateString() : value.date || "Not specified",
+                                        status: <BadgeComponent text={value.status || "pending"} />,
                                         action: <button className='px-2 py-1 text-[#1677ff]' onClick={() => { handleView(value.id, value.phone) }}>View</button>
                                     }
                                 })} />

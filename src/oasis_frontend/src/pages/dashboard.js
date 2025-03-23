@@ -51,10 +51,10 @@ const WelcomeMessage = () => {
             setUserName('User'); // Default fallback
         }
         
-        // Auto-hide welcome message after 5 seconds
+        // Auto-hide welcome message after 3 seconds (reduced from 5)
         const timer = setTimeout(() => {
             setShowMessage(false);
-        }, 5000);
+        }, 3000);
         
         return () => clearTimeout(timer);
     }, [Storage.user.get, principal]);
@@ -62,20 +62,20 @@ const WelcomeMessage = () => {
     if (!showMessage) return null;
     
     return (
-        <div className="fixed top-20 right-5 z-50 bg-[#222224] text-white p-4 rounded-lg shadow-lg animate-fadeIn">
+        <div className="fixed bottom-4 right-4 z-50 bg-[#222224] bg-opacity-80 text-white px-3 py-2 rounded-md shadow-lg animate-fade-in-up">
             <div className="flex items-center">
-                <div className="w-10 h-10 bg-[#fe570b] rounded-full flex items-center justify-center mr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                <div className="w-6 h-6 bg-[#fe570b] rounded-full flex items-center justify-center mr-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                     </svg>
                 </div>
-                <div>
-                    <h3 className="font-bold">Welcome!</h3>
-                    <p>You are logged in with <span className="text-[#fe570b]">ICP Principal: {userName}</span></p>
+                <div className="text-sm">
+                    <span className="text-xs text-gray-300">Logged in as:</span>
+                    <p className="font-medium text-[#fe570b]">{userName}</p>
                 </div>
                 <button 
                     onClick={() => setShowMessage(false)}
-                    className="ml-3 text-gray-400 hover:text-white"
+                    className="ml-2 text-xs text-gray-400 hover:text-white"
                 >
                     &times;
                 </button>

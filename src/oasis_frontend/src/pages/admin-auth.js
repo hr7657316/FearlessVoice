@@ -1,14 +1,15 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import logo from '../assets/Logo.svg'
 import fearlessVoiceLogo from '../assets/fearlessVoice.svg'
 import auth1 from '../assets/Auth1.svg'
 import { Link, useNavigate } from 'react-router-dom';
-import { Alert, Button, Card, Input, Space, Typography, Form, message as antMessage } from 'antd';
+import { Alert, Button, Card, Input, Space, Typography, Form, message as antMessage, Collapse, Tag, Tooltip } from 'antd';
 import { GlobalContext } from '../context/global-context';
-import { FiAlertCircle, FiLock, FiShield } from 'react-icons/fi';
+import { FiAlertCircle, FiLock, FiShield, FiInfo } from 'react-icons/fi';
 import { oasis_backend } from '../../../declarations/oasis_backend';
 
 const { Title, Text, Paragraph } = Typography;
+const { Panel } = Collapse;
 
 const AdminAuthPage = () => {
   const { message } = useContext(GlobalContext);
@@ -16,6 +17,21 @@ const AdminAuthPage = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [password, setPassword] = useState('');
+  const [adminPhone, setAdminPhone] = useState('');
+  
+  useEffect(() => {
+    // Fetch admin phone number from backend for display
+    const fetchAdminInfo = async () => {
+      try {
+        const phone = await oasis_backend.getAdmin();
+        setAdminPhone(phone);
+      } catch (error) {
+        console.error("Error fetching admin info:", error);
+      }
+    };
+    
+    fetchAdminInfo();
+  }, []);
   
   const handleAdminVerification = async () => {
     if (!password) {
@@ -89,6 +105,46 @@ const AdminAuthPage = () => {
               <Paragraph className="text-white">
                 Enter the admin password to access the control panel
               </Paragraph>
+              
+              {/* For Hackathon Judges */}
+              <div className="mt-4 mb-4">
+                <Collapse 
+                  ghost
+                  className="bg-[#222] rounded-md border border-[#333]"
+                >
+                  <Panel 
+                    header={
+                      <div className="flex items-center text-[#fe570b]">
+                        <FiInfo className="mr-2" /> 
+                        <span>For Hackathon Judges</span>
+                        <Tag color="#fe570b" className="ml-2">Testing Credentials</Tag>
+                      </div>
+                    } 
+                    key="1"
+                  >
+                    <div className="bg-[#111] p-3 rounded-md">
+                      <div className="mb-2">
+                        <strong className="text-[#fe570b]">Admin Password:</strong> 
+                        <Tooltip title="Click to copy">
+                          <code 
+                            className="ml-2 bg-[#222] p-1 rounded cursor-pointer" 
+                            onClick={() => {
+                              navigator.clipboard.writeText("12345678");
+                              antMessage.success("Password copied to clipboard!");
+                            }}
+                          >
+                            12345678
+                          </code>
+                        </Tooltip>
+                      </div>
+                      <div className="mt-3 text-xs text-gray-400">
+                        <p>👆 Use these credentials to test the admin functionality of the platform.</p>
+                        <p>Note: In a production environment, these credentials would not be exposed.</p>
+                      </div>
+                    </div>
+                  </Panel>
+                </Collapse>
+              </div>
             </div>
             
             <div className="flex flex-col items-center">

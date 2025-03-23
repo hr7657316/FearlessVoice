@@ -1,157 +1,300 @@
-<p align="center">
-  <a href="https://wysb7-2qaaa-aaaag-qcf4a-cai.icp0.io/">
-    <img src = "./src/oasis_frontend/src/assets/Logo.svg" width="1200" height="300">
-  </a>
-</p>
-
-<h1 align="right"> BreakTheSilence : Empowering survivors, shattering silence, and fostering justice through an innovative online support platform. </h1>
-
-                                              https://wysb7-2qaaa-aaaag-qcf4a-cai.icp0.io/
-
-Break The Silence is an innovative online platform that provides a safe space for victims of abuse to raise their voices and seek justice.
-Together, we are creating an oasis of support, where every voice matters,every survivor is empowered, and the cycle of this silence is shattered.
+# FearlessVoice
 
 <p align="center">
-  <a href="https://wysb7-2qaaa-aaaag-qcf4a-cai.icp0.io/">
-    <img alt="Website" src="https://img.shields.io/badge/-website-blue">
-  </a>
+  <img src="temp_logo/logo.png" alt="FearlessVoice Logo" width="200"/>
 </p>
 
-## 📎Deployment
+<p align="center">
+  A secure, blockchain-based reporting platform built on the Internet Computer Protocol.
+</p>
 
-<a href="https://wysb7-2qaaa-aaaag-qcf4a-cai.icp0.io/" target="_blank" rel="noopener noreferrer">Deployment Link </a>
+<p align="center">
+  <a href="#overview">Overview</a> •
+  <a href="#features">Features</a> •
+  <a href="#tech-stack">Tech Stack</a> •
+  <a href="#getting-started">Getting Started</a> •
+  <a href="#deployment">Deployment</a> •
+  <a href="#wallet-setup">Wallet Setup</a> •
+  <a href="#usage-guide">Usage Guide</a> •
+  <a href="#project-structure">Project Structure</a> •
+  <a href="#contact">Contact</a> •
+  <a href="#license">License</a>
+</p>
 
+## Overview
 
-## 😥The Problem
+FearlessVoice is a secure, blockchain-based reporting platform built on the Internet Computer Protocol that empowers users to safely document incidents, connect with support resources, and track case progress without compromising their privacy or security.
 
-- Until now, there has been a lack of dedicated platforms in India that provide individuals with a secure and convenient way to report incidents of physical abuse online.
-- The potential risks and vulnerabilities associated with data security when providing personal and complaint information raise concerns about protecting sensitive data from unauthorized access, breaches, and misuse.
-- The proliferation of websites allowing users to provide personal information for generating reports prevents users from giving fake report.
+The platform addresses critical gaps in existing reporting systems:
+- Traditional reporting methods often expose reporters to retaliation risks
+- Centralized data storage is vulnerable to breaches and unauthorized access
+- Complex procedures and privacy concerns discourage reporting
+- Tracking case progress is typically opaque, causing additional distress
+- Digital evidence is often easily compromised in traditional systems
 
+By leveraging blockchain technology, FearlessVoice creates a tamper-proof environment where incident reports remain secure and immutable, while providing appropriate transparency to authorized stakeholders.
 
-## ✨The Solutions
+## Features
 
-- BreakTheSilence is an intuitive online platform designed to provide a secure and user-friendly experience for individuals reporting incidents of physical abuse. 
-- The interface is accessible and easy to navigate, ensuring that survivors can report their experiences comfortably.
-- BreakTheSilence allows users to report incidents of physical abuse, we safeguard their identities and protect their privacy. Thus encourages more survivors to come forward and seek the assistance they need without fear of retaliation.
+- **Secure Reporting Form**: Structured, user-friendly interface for reporting incidents
+- **Case Tracking**: Real-time status updates for submitted reports
+- **Admin Dashboard**: Authorized personnel can review and update case status
+- **Blockchain Security**: All data is securely stored on the Internet Computer blockchain
+- **Anonymous Reporting**: Options for users to maintain anonymity while still receiving support
+- **Decentralized Authentication**: Secure login using Internet Computer's identity system
+- **Evidence Repository**: Secure storage for documentation and supporting materials
+- **Status Updates**: Automated notifications when case status changes
+- **Responsive Design**: Optimized experience across desktop and mobile devices
 
+## Tech Stack
 
-## ⚒️ How BreakTheSilence Works?
+### Frontend Development
+- **Primary Framework:** React.js
+- **Styling Framework:** TailwindCSS
+- **Build Tool:** Webpack
+- **Package Management:** npm
 
-BreakTheSilence streamlines the reporting process by providing a structured form that guides users through the necessary details of their incident. The platform ensures that critical information is captured accurately, enabling authorities to respond promptly and appropriately.
-BreakTheSilence forwards the petition to the nearest police station after getting the required details from the users through a secured form handled by the admin. Once the case is registered police will directly be in contact with the user without interference of any third person. Admin will only have the access the update the status of the case.
+### Backend Services
+- **Smart Contract Language:** Motoko
+- **Blockchain Platform:** Internet Computer Protocol (ICP)
+- **API Interface:** Candid interface description language
 
+### Authentication & Security
+- **Primary Authentication:** Internet Identity
+- **Wallet Integration:** Plug wallet
+- **Session Management:** Secure token-based authentication
 
-## 🎯 Important Aspect!
-BreakTheSilence use BLOCKCHAIN technology to store personal and complaint information which makes the data 100% secure , It ensures data integrity and prevents tampering, safeguarding sensitive details with encryption and access controls.
-we incorporate a robust terms and conditions page. This page would require users to explicitly agree that the information they provide is true and accurate. By doing so, we can avoid the problem of fake reporting.
+### Application Architecture
+- **State Management:** React Context API
+- **Navigation:** React Router with custom navigation components
+- **Data Flow:** Unidirectional state management pattern
 
+## Getting Started
 
+### Prerequisites
 
-## ▶️ Installation
+- Node.js (v16+)
+- npm or yarn
+- DFX (DFINITY Canister SDK) - version 0.14.0 or higher
+- Internet access for connecting to the Internet Computer network
 
-To get started, you might want to explore the project directory structure and the default configuration file. Working with this project in your development environment will not affect any production deployment or identity tokens.
+### Local Development Setup
 
-To learn more before you start working with BreakTheSilence, see the following documentation available online:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/fearlessvoice.git
+   cd fearlessvoice
+   ```
 
-- [Quick Start](https://internetcomputer.org/docs/current/developer-docs/quickstart/hello10mins)
-- [SDK Developer Tools](https://internetcomputer.org/docs/current/developer-docs/build/install-upgrade-remove)
-- [Motoko Programming Language Guide](https://internetcomputer.org/docs/current/developer-docs/build/cdks/motoko-dfinity/motoko/)
-- [Motoko Language Quick Reference](https://internetcomputer.org/docs/current/references/motoko-ref/)
-- [JavaScript API Reference](https://erxue-5aaaa-aaaab-qaagq-cai.raw.icp0.io)
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-<br/>
+3. **Start the local Internet Computer replica**
+   ```bash
+   dfx start --background
+   ```
 
-- If you want to start working on your project right away, you might want to try the following commands:
+4. **Deploy canisters to the local replica**
+   ```bash
+   dfx deploy
+   ```
+
+5. **Start the development server**
+   ```bash
+   npm start
+   ```
+
+6. **Access the application**
+   Open your browser and navigate to http://localhost:8080
+
+### Troubleshooting Common Setup Issues
+
+- **Node Version Errors**: Ensure you're using Node.js v16 or higher
+- **DFX Network Errors**: Check your internet connection and firewall settings
+- **Canister Deployment Failures**: Make sure your local replica is running
+- **Webpack Errors**: Clear the node_modules folder and reinstall dependencies
+
+## Wallet Setup
+
+FearlessVoice utilizes Internet Computer's authentication methods for secure access. Follow these steps to set up your wallet:
+
+### Internet Identity Setup
+
+1. **Create an Internet Identity**
+   - Visit [https://identity.ic0.app/](https://identity.ic0.app/)
+   - Click "Create New"
+   - Follow the on-screen instructions to create your identity anchor
+   - Record your recovery phrase and anchor number in a secure location
+
+2. **Connect Your Internet Identity to FearlessVoice**
+   - Navigate to the FearlessVoice login page
+   - Select "Internet Identity" as your login method
+   - Authenticate using your anchor number
+   - Follow the prompts to authorize the application
+
+### Plug Wallet Integration
+
+1. **Install the Plug Wallet Extension**
+   - Visit the [Chrome Web Store](https://chrome.google.com/webstore/detail/plug/cfbfdhimifdmdehjmkdobpcjfefblkjm) or [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/plug-wallet/)
+   - Install the Plug wallet extension
+   - Create a new wallet or import an existing one
+
+2. **Connect Plug Wallet to FearlessVoice**
+   - Navigate to the FearlessVoice login page
+   - Select "Plug Wallet" as your login method
+   - Approve the connection request in your Plug wallet
+   - Your wallet is now connected for secure transactions
+
+## Usage Guide
+
+### For Regular Users
+
+1. **Creating an Account**
+   - Visit the FearlessVoice homepage
+   - Click "Sign Up" or "Create Account"
+   - Choose your preferred authentication method
+   - Complete the registration process
+
+2. **Submitting a Report**
+   - Log in to your account
+   - Navigate to "Create New Report" from the dashboard
+   - Fill out the structured reporting form
+   - Attach any supporting documentation or evidence
+   - Submit your report to securely store it on the blockchain
+
+3. **Tracking Report Status**
+   - Access the "My Reports" section from your dashboard
+   - View all your submitted reports and their current status
+   - Click on any report to view detailed information
+   - Receive notifications when your report status changes
+
+4. **Communicating with Administrators**
+   - Use the secure messaging feature within each report
+   - Check for updates or requests for additional information
+   - Maintain anonymity settings according to your preference
+
+### For Administrators
+
+1. **Accessing the Admin Panel**
+   - Log in with your administrator credentials
+   - Navigate to "/dashboard/admin" to access the admin panel
+   - View the overview of all submitted reports
+
+2. **Managing Reports**
+   - Review incoming reports from the dashboard
+   - Update report status (New, In Progress, Resolved, etc.)
+   - Add internal notes and official responses
+   - Assign reports to specific team members
+
+3. **Report Analysis**
+   - Access analytics and reporting features
+   - View trends and patterns in reported incidents
+   - Generate reports for compliance and auditing purposes
+
+## Deployment
+
+### ICP Mainnet Deployment
+
+The application is deployed on the Internet Computer mainnet:
+
+- **Frontend Canister:** https://qdbb6-taaaa-aaaan-qetfa-cai.icp0.io
+- **Backend Canister:** https://qx3hc-myaaa-aaaan-qeq7a-cai.icp0.io
+
+### Canister IDs
+
+#### Development
+- Frontend: `rrkah-fqaaa-aaaaa-aaaaq-cai`
+- Backend: `ryjl3-tyaaa-aaaaa-aaaba-cai`
+
+#### Production
+- Frontend: `qdbb6-taaaa-aaaan-qetfa-cai`
+- Backend: `qx3hc-myaaa-aaaan-qeq7a-cai`
+
+### Deploying Your Own Instance
+
+1. **Set up your identity**
+   ```bash
+   dfx identity new deployment-identity
+   dfx identity use deployment-identity
+   ```
+
+2. **Configure canister settings**
+   Edit the `dfx.json` file to customize your deployment settings.
+
+3. **Deploy to the Internet Computer mainnet**
+   ```bash
+   dfx deploy --network ic
+   ```
+
+4. **Verify deployment**
+   Check the output for your canister IDs and access URLs.
+
+## Project Structure
 
 ```
-bash
-cd BreakTheSilence/
-dfx help
-dfx canister --help
+fearlessvoice/
+├── src/
+│   ├── oasis_backend/                # Motoko backend code
+│   │   ├── main.mo                   # Primary backend canister
+│   │   ├── types.mo                  # Type definitions
+│   │   └── utils/                    # Utility functions
+│   └── oasis_frontend/               # React frontend code
+│       ├── assets/                   # Static assets
+│       │   ├── images/               # Image resources
+│       │   └── styles/               # Global CSS files
+│       └── src/                      # Application source code
+│           ├── components/           # Reusable React components
+│           │   ├── dashboard/        # Dashboard components
+│           │   ├── forms/            # Form components
+│           │   └── shared/           # Shared UI components
+│           ├── pages/                # Application pages
+│           │   ├── landing/          # Landing page components
+│           │   ├── admin/            # Admin interface components
+│           │   ├── user/             # User dashboard components
+│           │   └── auth/             # Authentication pages
+│           ├── utils/                # Frontend utilities
+│           ├── services/             # API interaction services
+│           ├── context/              # React context providers
+│           └── index.jsx             # Entry point
+├── .dfx/                            # Local canister state
+├── dfx.json                         # DFX configuration
+├── webpack.config.js                # Webpack configuration
+├── package.json                     # NPM package configuration
+├── tailwind.config.js               # TailwindCSS configuration
+└── README.md                        # Project documentation
 ```
 
- Running the project locally
+## Contact
 
-- If you want to test your project locally, you can use the following commands:
+### Project Correspondence
 
-```bash```
-
-Starts the replica, running in the background
-
-```dfx start --background```
-
-- Deploys your canisters to the replica and generates your candid interface
-
-```dfx deploy```
-
-
-Once the job completes, your application will be available at `http://localhost:4943?canisterId={asset_canister_id}`.
-
-- If you have made changes to your backend canister, you can generate a new candid interface with
-
-
-```
-bash
-npm run generate
-```
-
-at any time. This is recommended before starting the frontend development server, and will be run automatically any time you run `dfx deploy`.
-
-- If you are making frontend changes, you can start a development server with
-```
-bash
-npm start
-```
-
-Which will start a server at `http://localhost:8080`, proxying API requests to the replica at port 4943.
-
-- Note on frontend environment variables
-
-If you are hosting frontend code somewhere without using DFX, you may need to make one of the following adjustments to ensure your project does not fetch the root key in production:
-
-- set`DFX_NETWORK` to `ic` if you are using Webpack
-- use your own preferred method to replace `process.env.DFX_NETWORK` in the autogenerated declarations
-  - Setting `canisters -> {asset_canister_id} -> declarations -> env_override to a string` in `dfx.json` will replace `process.env.DFX_NETWORK` with the string in the autogenerated declarations
-- Write your own `createActor` constructor
-    
-## 💻 Tech Stack
-
-**Client:** React, TailwindCSS
-
-**Backend:** Motoko, Python Flask (OTP Authentication)
-
-![TechStack](https://cloud.webxspark.com/files/images/break-the-silence-techstack.png)
-
-## ✌️ Our Team
-
-## 📬 Project Correspondence
-
-### Contact Information
-- **Project Name**: FearlessVoice (BreakTheSilence)
-- **Email**: fearlessvoice@example.com
-- **Support**: support@fearlessvoice.org
-- **GitHub Repository**: https://github.com/username/FearlessVoice
+- **Project Name:** FearlessVoice
+- **Contact Email:** contact@fearlessvoice.org
+- **GitHub Repository:** [https://github.com/your-username/fearlessvoice](https://github.com/your-username/fearlessvoice)
 
 ### Deployment Information
-- **ICP Mainnet**: [https://wysb7-2qaaa-aaaag-qcf4a-cai.icp0.io/](https://wysb7-2qaaa-aaaag-qcf4a-cai.icp0.io/)
-- **Canister IDs**:
-  - Frontend: bd3sg-teaaa-aaaaa-qaaba-cai (Development)
-  - Backend: bkyz2-fmaaa-aaaaa-qaaaq-cai (Development)
-  - Frontend (Production): wysb7-2qaaa-aaaag-qcf4a-cai
-  
-### Bug Reporting
-If you encounter any issues with the application, please report them through our issue tracker or send an email to bugs@fearlessvoice.org with the following information:
-- A detailed description of the issue
-- Steps to reproduce the problem
-- Browser and device information
-- Screenshots (if applicable)
 
-### Project Updates
-Follow us on social media for the latest updates and announcements:
-- Twitter: [@FearlessVoice](https://twitter.com/fearlessvoice)
-- Instagram: [@FearlessVoice_official](https://instagram.com/fearlessvoice_official)
-- LinkedIn: [FearlessVoice](https://linkedin.com/company/fearlessvoice)
+- **ICP Mainnet:** [https://qdbb6-taaaa-aaaan-qetfa-cai.icp0.io](https://qdbb6-taaaa-aaaan-qetfa-cai.icp0.io)
+
+### Bug Reporting
+
+Please report bugs by opening an issue on GitHub or contacting us directly. Include:
+- A clear description of the issue
+- Steps to reproduce
+- Expected vs. actual behavior
+- Screenshots if applicable
+- Your browser and operating system
 
 ### How to Contribute
-We welcome contributions from developers, designers, and content creators. Please read our [CONTRIBUTING.md](CONTRIBUTING.md) guide to get started.
+
+We welcome contributions from the community! Please follow these steps:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details. 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useContext, useEffect, useRef } from "react";
 import { GlobalContext } from "../../../../context/global-context";
-import { Modal, Result, Select, Table, Tabs, Tag } from "antd";
+import { Modal, Result, Select, Table, Tabs, Tag, Tooltip } from "antd";
 import { Link } from "react-router-dom";
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 import PreLoader from '../../pre-loader';
@@ -111,35 +111,28 @@ const ReportPreview = (props) => {
     const dataSource = [
         {
             key: uniqeKey(),
-            name: <div className="font-semibold">Abuser Name</div>,
-            abuse_type: pageData.preview && pageData.preview.name || '-',
-
+            name: <div className="font-semibold">Report Title</div>,
+            abuse_type: pageData.preview && pageData.preview.incidentTitle || '-',
         },
         {
             key: uniqeKey(),
-            name: <div className="font-semibold">Type of Abuse</div>,
-            abuse_type: pageData.preview && pageData.preview.type || '-',
+            name: <div className="font-semibold">Report Type</div>,
+            abuse_type: pageData.preview && pageData.preview.incidentType || '-',
         },
         {
             key: uniqeKey(),
-            name: '',
             name: <div className="font-semibold">Location of Incident</div>,
             abuse_type: pageData.preview && pageData.preview.location || '-',
         },
         {
             key: uniqeKey(),
-            name: <div className="font-semibold">Abuse Period</div>,
-            abuse_type: pageData.preview && <>{pageData.preview.days} {pageData.preview.daysPeriod}</> || '-',
+            name: <div className="font-semibold">Submitted On</div>,
+            abuse_type: pageData.preview && pageData.preview.submittedOn ? new Date(pageData.preview.submittedOn).toLocaleString() : '-',
         },
         {
             key: uniqeKey(),
-            name: <div className="font-semibold">Witness name (opt)</div>,
-            abuse_type: pageData.preview && pageData.preview.witnessName || '-',
-        },
-        {
-            key: uniqeKey(),
-            name: <div className="font-semibold">Witness Ph. number (opt)</div>,
-            abuse_type: pageData.preview && pageData.preview.witnessNo || '-',
+            name: <div className="font-semibold">Organization</div>,
+            abuse_type: pageData.preview && pageData.preview.organization || '-',
         },
         {
             key: uniqeKey(),
@@ -148,42 +141,55 @@ const ReportPreview = (props) => {
         },
         {
             key: uniqeKey(),
-            name: <div className="font-semibold">Supporting Evidence (opt)</div>,
+            name: <div className="font-semibold">Supporting Evidence</div>,
             abuse_type: file && <div className='underline underline-offset-2 cursor-pointer' onClick={() => setFilePreviewModalOpen(true)}>{file.filename}</div> || '-',
         },
         {
             key: uniqeKey(),
-            name: <div className="font-semibold">Additional Info/comments (opt)</div>,
-            abuse_type: pageData.preview && pageData.preview.addInfo || '-',
+            name: <div className="font-semibold">Status</div>,
+            abuse_type: pageData.preview && (
+                <Tag color={
+                    pageData.preview.status === 'pending' ? 'orange' : 
+                    pageData.preview.status === 'under investigation' ? 'blue' : 
+                    pageData.preview.status === 'resolved' ? 'green' : 'default'
+                }>
+                    {pageData.preview.status ? pageData.preview.status.charAt(0).toUpperCase() + pageData.preview.status.slice(1) : '-'}
+                </Tag>
+            ) || '-',
         },
     ];
 
     const dataSourceTwo = [
         {
             key: uniqeKey(),
+            name: <div className="font-semibold">User ID</div>,
+            abuse_type: pageData.userData && (
+                pageData.userData.principal ? 
+                <Tooltip title={pageData.userData.principal}>
+                    {`principal_${pageData.userData.principal.substring(0, 8)}...`}
+                </Tooltip> : 
+                (pageData.userData.phone || '-')
+            ),
+        },
+        {
+            key: uniqeKey(),
+            name: <div className="font-semibold">Authentication Type</div>,
+            abuse_type: pageData.userData && (pageData.userData.principal ? 'Internet Identity' : 'Phone OTP'),
+        },
+        {
+            key: uniqeKey(),
             name: <div className="font-semibold">Name</div>,
-            abuse_type: pageData.userData && <>{pageData.userData.firstName} {pageData.userData.lastName}</> || '-',
-
+            abuse_type: pageData.userData && (
+                pageData.userData.firstName && pageData.userData.lastName ? 
+                `${pageData.userData.firstName} ${pageData.userData.lastName}` : 
+                (pageData.userData.phone?.startsWith('principal_') ? pageData.userData.phone : '-')
+            ),
         },
         {
             key: uniqeKey(),
-            name: <div className="font-semibold">Phone Number</div>,
-            abuse_type: pageData.userData && pageData.userData.phone || '-',
-        },
-        {
-            key: uniqeKey(),
-            name: <div className="font-semibold">Address</div>,
-            abuse_type: pageData.userData && pageData.userData.address || '-',
-        },
-        {
-            key: uniqeKey(),
-            name: <div className="font-semibold">Aadhar Number</div>,
-            abuse_type: pageData.userData && pageData.userData.aadharNo || '-',
-        },
-        {
-            key: uniqeKey(),
-            name: <div className="font-semibold">City & Pincode</div>,
-            abuse_type: pageData.userData && <>{pageData.userData.city} - {pageData.userData.pincode}</> || '-',
+            name: <div className="font-semibold">Account Created</div>,
+            abuse_type: pageData.userData && pageData.userData.createdAt ? 
+                new Date(pageData.userData.createdAt).toLocaleDateString() : '-',
         },
     ];
     const handleStatusUpdateFormSubmit = async (e) => {

@@ -22,7 +22,14 @@ export const checkBrowserCompatibility = () => {
     }
 
     // Check if using a mobile browser (most mobile browsers don't support extensions)
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // More reliable mobile detection - checks both user agent AND touch points
+    const mobileUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const hasTouchScreen = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
+    
+    // Only consider it a mobile browser if the user agent matches AND 
+    // the window width is smaller than typical desktop sizes
+    const isMobile = mobileUserAgent && window.innerWidth < 768 && hasTouchScreen;
+    
     if (isMobile) {
       return {
         compatible: false,
@@ -37,12 +44,23 @@ export const checkBrowserCompatibility = () => {
   return { compatible: true };
 };
 
+// Safe way to check if Plug is properly installed and functioning
+const isPlugAvailable = () => {
+  try {
+    return !!(window?.ic?.plug && typeof window.ic.plug.requestConnect === 'function');
+  } catch (error) {
+    console.error("Error checking Plug availability:", error);
+    return false;
+  }
+};
+
 export const ICWalletProvider = ({ children }) => {
   const [principal, setPrincipal] = useState(null);
   const [accountId, setAccountId] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [isPlugAvailable, setIsPlugAvailable] = useState(false);
+  const [isPlugAvailableState, setIsPlugAvailableState] = useState(false);
+  const [connectionError, setConnectionError] = useState(null);
   const [browserCompatibility, setBrowserCompatibility] = useState({ compatible: true });
 
   useEffect(() => {
@@ -55,84 +73,121 @@ export const ICWalletProvider = ({ children }) => {
       return;
     }
 
-    // Check if Plug is available in the window object
-    if (window.ic?.plug) {
-      setIsPlugAvailable(true);
-      
-      // Check if already connected
-      window.ic.plug.isConnected().then((connected) => {
-        if (connected) {
-          setIsConnected(true);
-          getPlugPrincipal();
-        }
-      }).catch(err => {
-        console.error("Error checking Plug connection:", err);
-      });
+    // Safely check if Plug is available 
+    const plugAvailable = isPlugAvailable();
+    setIsPlugAvailableState(plugAvailable);
+    
+    if (plugAvailable) {
+      // Safely check if already connected
+      try {
+        window.ic.plug.isConnected().then((connected) => {
+          if (connected) {
+            setIsConnected(true);
+            getPlugPrincipal();
+          }
+        }).catch(err => {
+          console.error("Error checking Plug connection:", err);
+          setConnectionError("Failed to check Plug connection status");
+        });
+      } catch (err) {
+        console.error("Error accessing Plug wallet methods:", err);
+        setConnectionError("Cannot access Plug wallet. Please ensure the extension is properly installed.");
+      }
     } else {
-      console.log("Plug wallet not detected in browser");
+      console.log("Plug wallet not detected in browser or not properly initialized");
     }
   }, []);
 
   const getPlugPrincipal = async () => {
-    if (window.ic?.plug) {
-      try {
-        const principal = await window.ic.plug.agent.getPrincipal();
-        setPrincipal(principal.toString());
-        
-        // Get account ID
-        const accountId = await window.ic.plug.accountId();
-        setAccountId(accountId);
-        
-        return principal.toString();
-      } catch (error) {
-        console.error("Error getting Plug principal:", error);
-        return null;
-      }
+    if (!isPlugAvailable()) {
+      return null;
     }
-    return null;
+    
+    try {
+      const principal = await window.ic.plug.agent.getPrincipal();
+      setPrincipal(principal.toString());
+      
+      // Get account ID
+      const accountId = await window.ic.plug.accountId();
+      setAccountId(accountId);
+      
+      return principal.toString();
+    } catch (error) {
+      console.error("Error getting Plug principal:", error);
+      setConnectionError("Failed to get principal from Plug wallet");
+      return null;
+    }
   };
 
   const connectPlug = async () => {
-    if (!window.ic?.plug) {
+    setConnectionError(null);
+    
+    if (!isPlugAvailable()) {
+      // Redirect users to install Plug if not available
       window.open("https://plugwallet.ooo/", "_blank");
+      setConnectionError("Plug wallet not detected. Please install the extension.");
       return false;
     }
 
     setIsConnecting(true);
 
     try {
-      // Request connection
-      const whitelist = []; // Add canister IDs that your app needs to interact with
-      const host = process.env.DFX_NETWORK === 'ic' ? 'https://icp0.io' : 'http://localhost:4943';
+      // Define the canisters your application will interact with
+      const whitelist = [
+        // Add your canister IDs here
+        // Example: "rrkah-fqaaa-aaaaa-aaaaq-cai"
+      ]; 
       
-      const result = await window.ic.plug.requestConnect({
+      // Set the correct host based on environment
+      const host = window.location.host.includes('localhost') ? 
+                  'http://localhost:4943' : 
+                  'https://icp0.io';
+      
+      // Try to connect with a timeout to prevent hanging
+      const connectionPromise = window.ic.plug.requestConnect({
         whitelist,
-        host
+        host,
+        timeout: 10000 // 10 seconds timeout
       });
+      
+      const result = await connectionPromise;
 
       if (result) {
         setIsConnected(true);
         await getPlugPrincipal();
+      } else {
+        setConnectionError("Connection request was rejected");
       }
       
       setIsConnecting(false);
       return result;
     } catch (error) {
       console.error("Error connecting to Plug wallet:", error);
+      setConnectionError(error.message || "Failed to connect to Plug wallet");
       setIsConnecting(false);
       return false;
     }
   };
 
   const disconnectPlug = async () => {
-    if (window.ic?.plug) {
+    if (!isPlugAvailable()) {
+      setPrincipal(null);
+      setAccountId(null);
+      setIsConnected(false);
+      return true;
+    }
+    
+    try {
       await window.ic.plug.disconnect();
       setIsConnected(false);
       setPrincipal(null);
       setAccountId(null);
       return true;
+    } catch (error) {
+      console.error("Error disconnecting from Plug wallet:", error);
+      setConnectionError("Failed to disconnect from Plug wallet");
+      return false;
     }
-    return false;
   };
 
   return (
@@ -142,7 +197,8 @@ export const ICWalletProvider = ({ children }) => {
         accountId,
         isConnected,
         isConnecting,
-        isPlugAvailable,
+        isPlugAvailable: isPlugAvailableState,
+        connectionError,
         browserCompatibility,
         connectPlug,
         disconnectPlug,

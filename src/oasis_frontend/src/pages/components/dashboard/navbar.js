@@ -104,16 +104,16 @@ const Navbar = () => {
     
     return (
         <>
-            <nav className='flex my-6 items-center mx-5 justify-between text-white'>
-                <div className='flex gap-10'>
-                    <div className='text-xl font-bold flex items-center gap-2'>
-                        <div className='p-2 md:hidden rounded-md cursor-pointer' onClick={() => drawer.put()}>
+            <nav className='flex py-3 sm:py-4 md:my-6 items-center px-3 sm:px-5 justify-between text-white border-b border-gray-800 md:border-0'>
+                <div className='flex items-center'>
+                    <div className='text-lg sm:text-xl font-bold flex items-center gap-2'>
+                        <div className='p-2 md:hidden rounded-md cursor-pointer hover:bg-gray-900' onClick={() => drawer.toggle ? drawer.toggle() : (drawer.put ? drawer.put() : null)}>
                             <AiOutlineMenu />
                         </div>
-                        <span className='text-[#fe570b]'>{PageTitle.title}</span>
+                        <span className='text-[#fe570b] truncate max-w-[180px] sm:max-w-[300px] md:max-w-full'>{PageTitle.title}</span>
                     </div>
                 </div>
-                <div className='flex mr-7 gap-3 items-center'>
+                <div className='flex gap-2 sm:gap-3 items-center'>
                     <Popover
                         placement='bottomRight'
                         open={NotificationsPanel.visibility}
@@ -121,15 +121,15 @@ const Navbar = () => {
                         content={<Notifications />}
                         trigger='click'
                     >
-                        <div className='p-2 hover:bg-[#222222] rounded-full cursor-pointer duration-200 ease-in-out'>
+                        <div className='p-2 hover:bg-gray-900 rounded-full cursor-pointer duration-200 ease-in-out'>
                             <BsFillBellFill />
                         </div>
                     </Popover>
                     
                     <Dropdown overlay={userMenu} placement="bottomRight" trigger={['click']}>
-                        <div className='flex items-center gap-3 cursor-pointer'>
-                            <Avatar gap={4} className='cursor-pointer' style={{ backgroundColor: '#fe570b' }}>{profilePic}</Avatar>
-                            <div className=''>{displayName}</div>
+                        <div className='flex items-center gap-1 sm:gap-3 cursor-pointer'>
+                            <Avatar size="small" className='cursor-pointer' style={{ backgroundColor: '#fe570b' }}>{profilePic}</Avatar>
+                            <div className='hidden sm:block'>{displayName}</div>
                             <AiOutlineCaretDown />
                         </div>
                     </Dropdown>
@@ -137,10 +137,11 @@ const Navbar = () => {
             </nav>
             <Drawer 
                 closable={true} 
-                onClose={() => drawer.remove()} 
-                width={280} 
+                onClose={() => drawer.remove ? drawer.remove() : (drawer.close ? drawer.close() : null)} 
+                width="80%"
+                maxWidth={280}
                 placement="left" 
-                open={drawer.reveal}
+                open={drawer.reveal || (drawer.isOpen && drawer.isOpen())}
                 bodyStyle={{ padding: 0 }}
                 style={{ backgroundColor: 'black' }}
             >

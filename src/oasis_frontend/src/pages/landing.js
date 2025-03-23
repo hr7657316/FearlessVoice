@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Navbar from './components/landing/navbar';
 import bled from '../assets/Red&Black img.svg';
 import arrow from '../../src/assets/arrow.svg';
 import ulta from '../../src/assets/ulta-ulta.svg'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useICWallet } from '../context/ic-wallet-context';
 
 const FaqCard = (props) => {
     return (
@@ -33,10 +34,38 @@ const FaqCard = (props) => {
 
 const LandingPage = () => {
     var FaqCardCount = 0;
+    const navigate = useNavigate();
+    const { isConnected, principal } = useICWallet();
+    
     const getFaqCardCount = () => {
         FaqCardCount += 1;
         return FaqCardCount
     }
+    
+    const handleReportSubmission = () => {
+        // Check if user is authenticated with Plug wallet
+        if (isConnected && principal) {
+            navigate('/dashboard/abuse-form');
+            return;
+        }
+        
+        // Check if user is authenticated with local storage
+        if (typeof localStorage !== 'undefined' && localStorage.auth) {
+            try {
+                const authData = JSON.parse(localStorage.auth);
+                if (authData && authData.status === "logged-in") {
+                    navigate('/dashboard/abuse-form');
+                    return;
+                }
+            } catch (e) {
+                console.error("Error parsing auth data:", e);
+            }
+        }
+        
+        // If not authenticated, redirect to auth page
+        navigate('/auth');
+    }
+    
     return (
         <div className={`bg-[#0e0e0e] overflow-hidden -z-10`}>
             <Navbar />
@@ -55,11 +84,11 @@ const LandingPage = () => {
                                 of company policy without fear of retaliation.
                             </div>
                             <div className='flex items-center gap-8 lg:gap-5 '>
-                                <Link to="/dashboard/abuse-form">
-                                    <button className='text-white text-md lg:text-lg font-bold bg-[#fe570b] px-4 py-1 lg:px-6 lg:py-3 rounded-full'>
-                                        Submit a Report
-                                    </button>
-                                </Link>
+                                <button 
+                                    onClick={handleReportSubmission}
+                                    className='text-white text-md lg:text-lg font-bold bg-[#fe570b] px-4 py-1 lg:px-6 lg:py-3 rounded-full'>
+                                    Submit a Report
+                                </button>
                                 <a href='#faq'>
                                     <button className='bg-[#0d0101] text-white text-md lg:text-lg border-[1.5px] px-4 py-1 lg:px-7 lg:py-3 rounded-full'>
                                         Learn more
@@ -74,25 +103,25 @@ const LandingPage = () => {
                 </div>
             </div>
             <div id='faq'>
-                <div className='bg-[#161618] text-white mx-36 my-20 py-8 rounded-lg grid grid-cols-3'>
-                    <div className='flex flex-col items-center justify-center gap-4'>
-                        <div className='text-[#fe570b] text-6xl font-bold'>
+                <div className='bg-[#161618] text-white mx-4 sm:mx-8 md:mx-16 lg:mx-36 my-10 md:my-20 py-8 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-6'>
+                    <div className='flex flex-col items-center justify-center gap-4 py-4'>
+                        <div className='text-[#fe570b] text-4xl md:text-5xl lg:text-6xl font-bold'>
                             98%
                         </div>
                         <div className='text-md font-semibold'>
                             Data Security
                         </div>
                     </div>
-                    <div className='flex flex-col items-center justify-center gap-4'>
-                        <div className='text-[#fe570b] text-6xl font-bold'>
+                    <div className='flex flex-col items-center justify-center gap-4 py-4 border-t md:border-t-0 md:border-l md:border-r border-gray-800'>
+                        <div className='text-[#fe570b] text-4xl md:text-5xl lg:text-6xl font-bold'>
                             100+
                         </div>
                         <div className='text-md font-semibold'>
                             Corporate Clients
                         </div>
                     </div>
-                    <div className='flex flex-col items-center justify-center gap-4'>
-                        <div className='text-[#fe570b] text-6xl font-bold'>
+                    <div className='flex flex-col items-center justify-center gap-4 py-4 border-t md:border-t-0'>
+                        <div className='text-[#fe570b] text-4xl md:text-5xl lg:text-6xl font-bold'>
                             3500+
                         </div>
                         <div className='text-md font-semibold'>
@@ -101,70 +130,96 @@ const LandingPage = () => {
                     </div>
                 </div>
             </div>
-            <div className='flex-col gap-3 text-4xl text-[#fe570b] my-10 flex items-center justify-center '>
-                <span className='font-semibold'>Secure Whistleblowing Process</span>
-                <span className='text-white text-4xl'>Our Enterprise-Grade Reporting Workflow</span>
+            <div className='flex-col gap-3 my-10 flex items-center justify-center'>
+                <span className='font-semibold text-[#fe570b] text-2xl sm:text-3xl md:text-4xl text-center px-4'>Secure Whistleblowing Process</span>
+                <span className='text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl text-center px-4'>Our Enterprise-Grade Reporting Workflow</span>
             </div>
-            <div className='grid grid-cols-8 items-center justify-center mx-8'>
-                <div className='flex col-span-2'>
-                    <div className='flex flex-col items-center justify-center gap-4'>
+            
+            {/* Mobile layout for whistleblowing process */}
+            <div className='md:hidden flex flex-col items-center mx-4 sm:mx-8 space-y-8'>
+                <div className='flex flex-col items-center text-center'>
+                    <div className='bg-[#fe570b] text-xl text-white font-semibold rounded-full w-16 h-16 flex items-center justify-center mb-4'>1</div>
+                    <h3 className='text-md text-white font-semibold mb-2'>Submit Anonymous Report</h3>
+                    <p className='text-sm text-white mb-6'>Employee reports are encrypted and stored on blockchain technology, ensuring tamper-proof records and complete anonymity.</p>
+                </div>
+                
+                <div className='h-10 w-1 bg-[#fe570b]'></div>
+                
+                <div className='flex flex-col items-center text-center'>
+                    <div className='bg-[#fe570b] text-xl text-white font-semibold rounded-full w-16 h-16 flex items-center justify-center mb-4'>2</div>
+                    <h3 className='text-md text-white font-semibold mb-2'>Secure Review by Management</h3>
+                    <p className='text-sm text-white mb-6'>Authorized personnel receive and review reports through a secure dashboard while maintaining reporter anonymity.</p>
+                </div>
+                
+                <div className='h-10 w-1 bg-[#fe570b]'></div>
+                
+                <div className='flex flex-col items-center text-center'>
+                    <div className='bg-[#fe570b] text-xl text-white font-semibold rounded-full w-16 h-16 flex items-center justify-center mb-4'>3</div>
+                    <h3 className='text-md text-white font-semibold mb-2'>Investigation & Resolution</h3>
+                    <p className='text-sm text-white mb-6'>Reports are investigated according to company policy, with anonymous updates provided to whistleblowers through the platform.</p>
+                </div>
+            </div>
+            
+            {/* Desktop layout for whistleblowing process */}
+            <div className='hidden md:grid md:grid-cols-5 items-center justify-center mx-8 lg:mx-16 xl:mx-24'>
+                <div className='col-span-2'>
+                    <div className='flex flex-col items-center justify-center gap-2 px-2 lg:px-4'>
                         <button className='bg-[#fe570b] text-xl text-white font-semibold rounded-full w-16 h-16'>
                             1
                         </button>
-                        <div className='text-md text-white font-semibold'>
-                            <div className='flex flex-col gap-2 items-center justify-center'>
-                                Submit Anonymous Report
-                                <span className='text-base font-normal mb-10 px-10'>
-                                    Employee reports are encrypted and stored on blockchain technology, ensuring tamper-proof records and complete anonymity.
-                                </span>
-                            </div>
+                        <div className='text-white text-center'>
+                            <div className='font-semibold text-lg mb-2'>Submit Anonymous Report</div>
+                            <p className='text-sm lg:text-base'>
+                                Employee reports are encrypted and stored on blockchain technology, ensuring tamper-proof records and complete anonymity.
+                            </p>
                         </div>
                     </div>
                 </div>
-                <div className='flex items-center justify-center'>
-                    <img className='h-auto w-24' src={arrow} />
+                
+                <div className='justify-self-center'>
+                    <img className='h-auto w-12 lg:w-20' src={arrow} alt="Arrow" />
                 </div>
-                <div className='flex col-span-2'>
-                    <div className='flex flex-col items-center justify-center gap-4'>
+                
+                <div className='col-span-2'>
+                    <div className='flex flex-col items-center justify-center gap-2 px-2 lg:px-4'>
                         <button className='bg-[#fe570b] text-xl text-white font-semibold rounded-full w-16 h-16'>
                             2
                         </button>
-                        <div className='text-md text-white font-semibold'>
-                            <div className='flex flex-col gap-2 items-center justify-center'>
-                                Secure Review by Management
-                                <span className='text-base font-normal mb-10 px-14'>
-                                    Authorized personnel receive and review reports through a secure dashboard while maintaining reporter anonymity.
-                                </span>
-                            </div>
+                        <div className='text-white text-center'>
+                            <div className='font-semibold text-lg mb-2'>Secure Review by Management</div>
+                            <p className='text-sm lg:text-base'>
+                                Authorized personnel receive and review reports through a secure dashboard while maintaining reporter anonymity.
+                            </p>
                         </div>
                     </div>
                 </div>
-                <div className='flex items-center justify-center'>
-                    <img className='h-auto w-24' src={ulta} />
-                </div>
-                <div className='flex flex-col col-span-2 items-center justify-center gap-4'>
-                    <button className='bg-[#fe570b] text-xl text-white font-semibold rounded-full w-16 h-16'>
-                        3
-                    </button>
-                    <div className='text-md text-white font-semibold'>
-                        <div className='flex flex-col gap-2 items-center justify-center'>
-                            Investigation & Resolution
-                            <span className='text-base font-normal mb-10 px-12'>
+            </div>
+            
+            {/* Step 3 of workflow process for desktop */}
+            <div className='hidden md:flex justify-center mt-8 mb-12'>
+                <div className='max-w-md'>
+                    <div className='flex flex-col items-center justify-center gap-2'>
+                        <button className='bg-[#fe570b] text-xl text-white font-semibold rounded-full w-16 h-16'>
+                            3
+                        </button>
+                        <div className='text-white text-center'>
+                            <div className='font-semibold text-lg mb-2'>Investigation & Resolution</div>
+                            <p className='text-sm lg:text-base'>
                                 Reports are investigated according to company policy, with anonymous updates provided to whistleblowers through the platform.
-                            </span>
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
             <div className='my-20'>
                 <div className='text-5xl text-[#fe570b] flex flex-col gap-4 items-center justify-center my-6'>
-                    FAQs
-                    <div className='text-white text-2xl'>
+                    <span className="text-3xl sm:text-4xl md:text-5xl">FAQs</span>
+                    <div className='text-white text-lg sm:text-xl md:text-2xl px-4 text-center'>
                         Common questions about our corporate whistleblowing platform and how it can benefit your organization.
                     </div>
                 </div>
                 <div className='flex flex-col gap-8'>
-                    <div className='grid grid-cols-3 gap-9 gap-y-20 mx-20 my-8'>
+                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 gap-y-16 md:gap-y-20 mx-4 sm:mx-8 md:mx-16 lg:mx-20 my-8'>
                         <FaqCard title="What types of corporate misconduct can be reported?"
                             answer="Fearless Voice supports reporting of all forms of corporate misconduct, including fraud, corruption, harassment, discrimination, safety violations, conflicts of interest, environmental violations, and other ethical breaches or legal non-compliance."
                             count={getFaqCardCount()} />
@@ -197,15 +252,7 @@ const LandingPage = () => {
                         </div>
                     </div>
                     <div className="flex items-center gap-2 order-1 md:order-3">
-                        <a href="#hero"><div className="cursor-pointer text-[#84889d] mr-4 text-sm ">
-                            About
-                        </div></a>
-                        <Link to="/auth"><div className="cursor-pointer text-[#84889d] mr-4 text-sm">
-                            Support
-                        </div></Link>
-                        <Link to="/dashboard/abuse-form"><div className="cursor-pointer text-[#84889d] mr-4 text-sm">
-                            Contact Us
-                        </div></Link>
+                        {/* Footer links removed as requested */}
                     </div>
                 </footer>
             </div>
@@ -220,9 +267,6 @@ const LandingPage = () => {
                     <div className='text-[20px] text-gray-500 mt-4 text-center lg:text-left'>
                         Empower your employees to speak up against misconduct while protecting them and your organization with our secure, blockchain-powered whistleblowing platform.
                     </div>
-                    <Link to="/auth">
-                        <button className='mt-10 bg-[#fe570b] text-white text-xl px-7 py-4 rounded-2xl'>Get Started</button>
-                    </Link>
                 </div>
             </div>
 
@@ -268,15 +312,6 @@ const LandingPage = () => {
                         <p className='text-gray-400 text-center'>Cultivate transparency, accountability and employee engagement across the organization</p>
                     </div>
                 </div>
-                
-                <div className='mt-12 text-center flex flex-col sm:flex-row gap-4 justify-center'>
-                    <Link to="/auth">
-                        <button className='bg-[#fe570b] text-white text-lg px-8 py-3 rounded-full'>Request Corporate Demo</button>
-                    </Link>
-                    <Link to="/">
-                        <button className='bg-[#222224] border border-[#fe570b] text-white text-lg px-8 py-3 rounded-full hover:bg-[#fe570b] transition-colors'>Browse Anonymous Reports</button>
-                    </Link>
-                </div>
             </div>
             
             {/* Public Reports Section - NEW */}
@@ -288,7 +323,7 @@ const LandingPage = () => {
                     Browse real whistleblower reports on our public feed. All personal identifiers have been removed to ensure anonymity and security.
                 </p>
                 <div className='flex justify-center'>
-                    <Link to="/">
+                    <Link to="/feed">
                         <button className='bg-[#fe570b] text-white text-xl px-10 py-4 rounded-lg flex items-center gap-3 hover:bg-[#e04e0a] transition-colors'>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />

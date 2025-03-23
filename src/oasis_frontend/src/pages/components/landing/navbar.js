@@ -116,37 +116,31 @@ const Navbar = () => {
     );
 
     return (
-        <div className='flex justify-between gap-4 px-8 pt-8 items-center bg-transparent'>
-            <div>
+        <div className='flex flex-col sm:flex-row justify-between gap-4 px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8 items-center bg-transparent'>
+            <div className='mb-4 sm:mb-0'>
                 <Link to="/">
-                    <img className='w-40 h-auto' src={fearlessVoiceLogo} alt="Fearless Voice" />
+                    <img className='w-32 sm:w-36 md:w-40 h-auto' src={fearlessVoiceLogo} alt="Fearless Voice" />
                 </Link>
             </div>
-            <div className='flex gap-6 items-center'>
+            <div className='flex gap-3 sm:gap-4 md:gap-6 items-center'>
                 <Link to="/feed">
-                    <button className='bg-[#222224] px-4 py-2 rounded-lg border-[1px] border-[#333335] text-white'>
+                    <button className='bg-[#222224] text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border-[1px] border-[#333335] text-white whitespace-nowrap'>
                         View Reports
-                    </button>
-                </Link>
-                
-                <Link to="/">
-                    <button className='text-white hover:text-[#fe570b] transition-colors'>
-                        About Us
                     </button>
                 </Link>
                 
                 {isLoggedIn ? (
                     <Dropdown overlay={userMenu} placement="bottomRight">
-                        <button className='bg-[#fe570b] flex items-center gap-2 px-4 py-2 rounded-lg text-white'>
-                            <FiUser /> {userName}
+                        <button className='bg-[#fe570b] flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-white text-sm sm:text-base'>
+                            <FiUser /> <span className="truncate max-w-[80px] sm:max-w-full">{userName}</span>
                         </button>
                     </Dropdown>
                 ) : (
                     <Space>
                         {isConnected ? (
                             <Dropdown overlay={userMenu} placement="bottomRight">
-                                <button className='bg-[#fe570b] flex items-center gap-2 px-4 py-2 rounded-lg text-white'>
-                                    <FiUser /> {principal.substring(0, 8) + '...'}
+                                <button className='bg-[#fe570b] flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-white text-sm sm:text-base'>
+                                    <FiUser /> <span className="truncate max-w-[80px] sm:max-w-full">{principal.substring(0, 8) + '...'}</span>
                                 </button>
                             </Dropdown>
                         ) : (
@@ -164,7 +158,7 @@ const Navbar = () => {
                                 placement="bottomRight"
                             >
                                 <button 
-                                    className='bg-[#fe570b] flex items-center gap-2 px-4 py-2 rounded-lg text-white'
+                                    className='bg-[#fe570b] flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-white text-sm sm:text-base whitespace-nowrap'
                                 >
                                     <FiExternalLink /> {isConnecting ? 'Connecting...' : 'Login / Register'}
                                 </button>

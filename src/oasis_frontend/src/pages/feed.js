@@ -7,6 +7,8 @@ import { FiEye, FiMessageCircle, FiClock, FiAlertCircle, FiThumbsUp, FiShare2, F
 import Navbar from './components/landing/navbar';
 import fearlessVoiceLogo from '../assets/fearlessVoice.svg';
 import { useICWallet } from '../context/ic-wallet-context';
+import Aside from './components/dashboard/aside';
+import DashboardNavbar from './components/dashboard/navbar';
 
 // Login Modal Component
 const LoginPromptModal = ({ isVisible, onClose, actionType }) => {
@@ -24,16 +26,18 @@ const LoginPromptModal = ({ isVisible, onClose, actionType }) => {
       onCancel={onClose}
       footer={null}
       centered
+      width="90%"
+      maxWidth={400}
       className="login-prompt-modal"
     >
-      <div className="text-center py-6">
-        <div className="bg-[#fe570b] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
+      <div className="text-center py-4 sm:py-6">
+        <div className="bg-[#fe570b] w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-8 sm:w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
           </svg>
         </div>
-        <h3 className="text-2xl font-bold mb-2">Authentication Required</h3>
-        <p className="text-gray-500 mb-6">
+        <h3 className="text-xl sm:text-2xl font-bold mb-2">Authentication Required</h3>
+        <p className="text-gray-500 text-sm sm:text-base mb-4 sm:mb-6">
           {actionType === 'comment' 
             ? 'You need to log in to comment on this report.' 
             : actionType === 'like'
@@ -44,16 +48,16 @@ const LoginPromptModal = ({ isVisible, onClose, actionType }) => {
             ? 'You need to log in to flag this content.'
             : 'You need to log in to interact with this content.'}
         </p>
-        <div className="flex justify-center gap-4">
+        <div className="flex justify-center gap-3 sm:gap-4">
           <button 
             onClick={onClose}
-            className="px-5 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+            className="px-3 sm:px-5 py-2 border border-gray-300 rounded-lg text-sm sm:text-base text-gray-700 hover:bg-gray-100 transition-colors"
           >
             Cancel
           </button>
           <button 
             onClick={handleLogin}
-            className="px-5 py-2 bg-[#fe570b] text-white rounded-lg hover:bg-[#e04e0a] transition-colors"
+            className="px-3 sm:px-5 py-2 bg-[#fe570b] text-sm sm:text-base text-white rounded-lg hover:bg-[#e04e0a] transition-colors"
           >
             Log In Now
           </button>
@@ -621,48 +625,48 @@ const FeedItem = ({ report, index, onDataUpdate }) => {
   };
 
   return (
-    <div className="bg-[#161618] rounded-lg p-4 mb-4 text-white shadow-lg hover:shadow-xl transition-all duration-200">
-      {/* Anonymous indicator */}
-      <div className="flex items-center mb-2">
-        <div className="w-8 h-8 bg-[#fe570b] rounded-full flex items-center justify-center text-white font-bold">
+    <div className="bg-[#161618] rounded-lg p-3 sm:p-4 mb-4 text-white shadow-lg hover:shadow-xl transition-all duration-200">
+      {/* Anonymous indicator - more responsive layout */}
+      <div className="flex items-center mb-2 flex-wrap sm:flex-nowrap">
+        <div className="w-7 h-7 sm:w-8 sm:h-8 bg-[#fe570b] rounded-full flex items-center justify-center text-white font-bold">
           A
         </div>
-        <div className="ml-2">
-          <span className="text-gray-400 text-sm">Anonymous Whistleblower</span>
+        <div className="ml-2 flex-grow">
+          <span className="text-gray-400 text-xs sm:text-sm">Anonymous Whistleblower</span>
           <div className="flex items-center text-xs text-gray-500">
             <FiClock className="mr-1" />
             <span>{getTimeSince(report.submittedOn)}</span>
           </div>
         </div>
-        <div className={`ml-auto ${getStatusColor(report.status)} text-white text-xs px-2 py-1 rounded-full`}>
+        <div className={`ml-0 sm:ml-auto mt-2 sm:mt-0 ${getStatusColor(report.status)} text-white text-xs px-2 py-1 rounded-full`}>
           {report.status || 'Pending'}
         </div>
       </div>
 
       {/* Incident title and type */}
-      <h3 className="text-xl font-bold text-[#fe570b] mb-2">{report.incidentTitle || 'Anonymous Report'}</h3>
-      <div className="mb-3 text-sm bg-[#222224] inline-block px-2 py-1 rounded-md">
+      <h3 className="text-lg sm:text-xl font-bold text-[#fe570b] mb-2">{report.incidentTitle || 'Anonymous Report'}</h3>
+      <div className="mb-3 text-xs sm:text-sm bg-[#222224] inline-block px-2 py-1 rounded-md">
         {report.incidentType || 'Whistleblower Report'}
       </div>
 
       {/* Content */}
-      <div className="mb-4 text-gray-300">
+      <div className="mb-4 text-sm sm:text-base text-gray-300">
         {expanded ? report.description : truncateText(report.description)}
         {report.description && report.description.length > 250 && (
           <button 
             onClick={() => setExpanded(!expanded)} 
-            className="text-[#fe570b] ml-2 text-sm hover:underline"
+            className="text-[#fe570b] ml-2 text-xs sm:text-sm hover:underline"
           >
             {expanded ? 'Read less' : 'Read more'}
           </button>
         )}
       </div>
 
-      {/* Display uploaded images if available */}
+      {/* Display uploaded images if available - improved responsive grid */}
       {report.evidences && report.evidences.length > 0 && (
         <div className="mb-4">
-          <h4 className="text-sm font-semibold text-gray-400 mb-2">Uploaded Evidence:</h4>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <h4 className="text-xs sm:text-sm font-semibold text-gray-400 mb-2">Uploaded Evidence:</h4>
+          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3">
             {report.evidences.map((evidence, idx) => {
               // Handle both types of evidence formats that might be in the system
               // Some might be URLs, others might be objects with {filename, file, type}
@@ -728,25 +732,25 @@ const FeedItem = ({ report, index, onDataUpdate }) => {
           onClick={closeLightbox}
         >
           <div 
-            className="max-w-4xl max-h-[90vh] relative flex flex-col items-center"
+            className="max-w-full w-[90%] sm:max-w-4xl max-h-[90vh] relative flex flex-col items-center"
             onClick={(e) => e.stopPropagation()}
           >
             <img 
               src={selectedImage} 
               alt="Full size evidence" 
-              className="max-w-full max-h-[80vh] object-contain"
+              className="max-w-full max-h-[75vh] object-contain"
             />
             <div className="w-full flex justify-between items-center mt-3 p-2">
               <a 
                 href={selectedImage} 
                 download="evidence.jpg"
-                className="text-white bg-[#222224] hover:bg-[#333336] px-3 py-1 rounded-md text-sm"
+                className="text-white text-xs sm:text-sm bg-[#222224] hover:bg-[#333336] px-2 sm:px-3 py-1 rounded-md"
               >
                 Download
               </a>
               <button 
                 onClick={closeLightbox}
-                className="text-white bg-[#fe570b] px-4 py-1 rounded-md text-sm hover:bg-[#ff6a1e]"
+                className="text-white text-xs sm:text-sm bg-[#fe570b] px-3 sm:px-4 py-1 rounded-md hover:bg-[#ff6a1e]"
               >
                 Close
               </button>
@@ -755,49 +759,48 @@ const FeedItem = ({ report, index, onDataUpdate }) => {
         </div>
       )}
 
-      {/* Location */}
+      {/* Location & Organization - responsive text size */}
       {report.location && (
-        <div className="text-sm text-gray-400 mb-3">
+        <div className="text-xs sm:text-sm text-gray-400 mb-2 sm:mb-3">
           <span className="font-semibold">Location:</span> {report.location}
         </div>
       )}
 
-      {/* Organization */}
       {report.organization && (
-        <div className="text-sm text-gray-400 mb-3">
+        <div className="text-xs sm:text-sm text-gray-400 mb-2 sm:mb-3">
           <span className="font-semibold">Organization:</span> {report.organization}
         </div>
       )}
 
-      {/* Metadata and interactions */}
-      <div className="flex items-center text-sm text-gray-400 border-t border-gray-700 pt-3 mt-2">
-        <div className="flex items-center mr-4">
+      {/* Metadata and interactions - more responsive on small screens */}
+      <div className="flex flex-wrap items-center text-xs sm:text-sm text-gray-400 border-t border-gray-700 pt-2 sm:pt-3 mt-2">
+        <div className="flex items-center mr-3 sm:mr-4 mb-1 sm:mb-0">
           <FiEye className="mr-1" />
           <span>{Math.floor(Math.random() * 100) + 5} views</span>
         </div>
         <div 
-          className="flex items-center mr-4 cursor-pointer hover:text-[#fe570b] transition-colors"
+          className="flex items-center mr-3 sm:mr-4 mb-1 sm:mb-0 cursor-pointer hover:text-[#fe570b] transition-colors"
           onClick={() => handleAuthRequiredAction('comment')}
         >
           <FiMessageCircle className="mr-1" />
           <span>{commentCount} comments</span>
         </div>
         {report.flags && report.flags.length > 0 && isLoggedIn() && (
-          <div className="flex items-center mr-4 text-yellow-500">
+          <div className="flex items-center mr-3 sm:mr-4 mb-1 sm:mb-0 text-yellow-500">
             <FiFlag className="mr-1" />
             <span>{report.flags.length} flags</span>
           </div>
         )}
-        <div className="flex items-center ml-auto">
+        <div className="flex items-center ml-0 sm:ml-auto">
           <FiAlertCircle className="mr-1" />
           <span>Report #{index + 1}</span>
         </div>
       </div>
 
-      {/* Interactive buttons - All require login */}
-      <div className="flex justify-between mt-4 pt-3 border-t border-gray-700">
+      {/* Interactive buttons - More responsive for small screens */}
+      <div className="flex flex-wrap justify-between gap-1 mt-3 pt-3 border-t border-gray-700">
         <button 
-          className={`flex items-center justify-center gap-2 ${hasLiked ? 'text-[#fe570b]' : 'text-gray-400'} hover:text-[#fe570b] transition-colors px-3 py-1 rounded-md`}
+          className={`flex items-center justify-center gap-1 sm:gap-2 ${hasLiked ? 'text-[#fe570b]' : 'text-gray-400'} hover:text-[#fe570b] transition-colors px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm`}
           onClick={() => handleAuthRequiredAction('like')}
         >
           <FiThumbsUp />
@@ -805,7 +808,7 @@ const FeedItem = ({ report, index, onDataUpdate }) => {
         </button>
         
         <button 
-          className="flex items-center justify-center gap-2 text-gray-400 hover:text-[#fe570b] transition-colors px-3 py-1 rounded-md"
+          className="flex items-center justify-center gap-1 sm:gap-2 text-gray-400 hover:text-[#fe570b] transition-colors px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm"
           onClick={() => handleAuthRequiredAction('comment')}
         >
           <FiMessageCircle />
@@ -813,7 +816,7 @@ const FeedItem = ({ report, index, onDataUpdate }) => {
         </button>
         
         <button 
-          className="flex items-center justify-center gap-2 text-gray-400 hover:text-[#fe570b] transition-colors px-3 py-1 rounded-md"
+          className="flex items-center justify-center gap-1 sm:gap-2 text-gray-400 hover:text-[#fe570b] transition-colors px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm"
           onClick={() => handleAuthRequiredAction('share')}
         >
           <FiShare2 />
@@ -821,7 +824,7 @@ const FeedItem = ({ report, index, onDataUpdate }) => {
         </button>
         
         <button 
-          className="flex items-center justify-center gap-2 text-gray-400 hover:text-[#fe570b] transition-colors px-3 py-1 rounded-md"
+          className="flex items-center justify-center gap-1 sm:gap-2 text-gray-400 hover:text-[#fe570b] transition-colors px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm"
           onClick={() => handleAuthRequiredAction('report')}
         >
           <FiFlag />
@@ -880,16 +883,18 @@ const FeedItem = ({ report, index, onDataUpdate }) => {
         onCancel={() => setShareModalVisible(false)}
         footer={null}
         centered
+        width="90%"
+        maxWidth={500}
         className="share-modal"
       >
-        <div className="p-4">
-          <div className="mb-6">
-            <h3 className="text-lg font-medium mb-2">Copy Link</h3>
+        <div className="p-3 sm:p-4">
+          <div className="mb-4 sm:mb-6">
+            <h3 className="text-base sm:text-lg font-medium mb-2">Copy Link</h3>
             <div className="flex gap-2">
               <Input 
                 value={getShareableLink()} 
                 readOnly 
-                className="flex-1"
+                className="flex-1 text-xs sm:text-sm"
               />
               <Button 
                 type="primary" 
@@ -897,44 +902,44 @@ const FeedItem = ({ report, index, onDataUpdate }) => {
                 onClick={handleCopyLink}
                 className="bg-[#fe570b] hover:bg-[#e04e0a] border-none"
               >
-                Copy
+                <span className="hidden sm:inline">Copy</span>
               </Button>
             </div>
             {copySuccess && (
-              <div className="text-green-500 mt-2 text-sm">{copySuccess}</div>
+              <div className="text-green-500 mt-2 text-xs sm:text-sm">{copySuccess}</div>
             )}
           </div>
           
           <div>
-            <h3 className="text-lg font-medium mb-3">Share on Social Media</h3>
-            <div className="flex justify-center gap-4">
+            <h3 className="text-base sm:text-lg font-medium mb-2 sm:mb-3">Share on Social Media</h3>
+            <div className="flex justify-center gap-3 sm:gap-4">
               <button
                 onClick={() => handleSocialShare('twitter')}
-                className="text-[#1DA1F2] p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                className="text-[#1DA1F2] p-2 sm:p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                 aria-label="Share on Twitter"
               >
-                <FiTwitter size={24} />
+                <FiTwitter size={20} />
               </button>
               <button
                 onClick={() => handleSocialShare('facebook')}
-                className="text-[#4267B2] p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                className="text-[#4267B2] p-2 sm:p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                 aria-label="Share on Facebook"
               >
-                <FiFacebook size={24} />
+                <FiFacebook size={20} />
               </button>
               <button
                 onClick={() => handleSocialShare('linkedin')}
-                className="text-[#0077B5] p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                className="text-[#0077B5] p-2 sm:p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                 aria-label="Share on LinkedIn"
               >
-                <FiLinkedin size={24} />
+                <FiLinkedin size={20} />
               </button>
               <button
                 onClick={() => handleSocialShare('email')}
-                className="text-[#DB4437] p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                className="text-[#DB4437] p-2 sm:p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                 aria-label="Share via Email"
               >
-                <FiMail size={24} />
+                <FiMail size={20} />
               </button>
             </div>
           </div>
@@ -948,10 +953,12 @@ const FeedItem = ({ report, index, onDataUpdate }) => {
         onCancel={() => setFlagModalVisible(false)}
         footer={null}
         centered
+        width="90%"
+        maxWidth={500}
         className="flag-modal"
       >
-        <div className="p-4">
-          <p className="mb-4 text-gray-600">
+        <div className="p-3 sm:p-4">
+          <p className="mb-4 text-xs sm:text-sm text-gray-600">
             Help us maintain a safe and respectful community by reporting content that violates our community guidelines.
           </p>
           
@@ -965,8 +972,9 @@ const FeedItem = ({ report, index, onDataUpdate }) => {
               <Radio.Group 
                 onChange={(e) => setFlagReason(e.target.value)} 
                 value={flagReason}
+                className="text-xs sm:text-sm"
               >
-                <div className="space-y-2">
+                <div className="space-y-1 sm:space-y-2">
                   <Radio value="misinformation">Misinformation or false reporting</Radio>
                   <Radio value="harassment">Harassment or bullying</Radio>
                   <Radio value="inappropriate">Inappropriate or explicit content</Radio>
@@ -983,14 +991,16 @@ const FeedItem = ({ report, index, onDataUpdate }) => {
                 value={flagDescription}
                 onChange={(e) => setFlagDescription(e.target.value)}
                 placeholder="Please provide any additional information that will help us understand the issue."
-                rows={4}
+                rows={3}
+                className="text-xs sm:text-sm"
               />
             </Form.Item>
             
             <div className="flex justify-end mt-4">
               <Button
                 onClick={() => setFlagModalVisible(false)}
-                className="mr-2"
+                className="mr-2 text-xs sm:text-sm"
+                size="middle"
               >
                 Cancel
               </Button>
@@ -998,7 +1008,8 @@ const FeedItem = ({ report, index, onDataUpdate }) => {
                 type="primary"
                 onClick={handleFlagSubmit}
                 loading={isSubmittingFlag}
-                className="bg-[#fe570b] hover:bg-[#e04e0a] border-none"
+                className="bg-[#fe570b] hover:bg-[#e04e0a] border-none text-xs sm:text-sm"
+                size="middle"
               >
                 Submit Flag
               </Button>
@@ -1024,6 +1035,18 @@ const FeedPage = () => {
   const isMounted = useRef(false);
   const navigate = useNavigate();
   const { principal, isConnected } = useICWallet();
+
+  // Function to handle navigation and prevent unnecessary redirects
+  const handleNavigation = (path, event) => {
+    // If we're already on this path, prevent default behavior
+    if (window.location.pathname === path) {
+      event.preventDefault();
+      return;
+    }
+    
+    // Otherwise, navigate to the path
+    navigate(path);
+  };
 
   // Function to check if user is logged in
   const isLoggedIn = () => {
@@ -1185,79 +1208,41 @@ const FeedPage = () => {
   }, []);
 
   return (
-    <div className="flex bg-black h-screen overflow-hidden text-white">
-      {/* Left Sidebar - Static */}
-      <div className="w-64 bg-black h-screen flex flex-col justify-between py-6 flex-shrink-0 border-r border-gray-800">
-        <div>
-          {/* Logo */}
-          <Link to="/">
-            <div className="mb-12 flex justify-center">
-              <img className='w-40 h-auto' src={fearlessVoiceLogo} alt="Fearless Voice" />
-            </div>
-          </Link>
-          
-          {/* Navigation Links */}
-          <div className="space-y-4 px-4">
-            <Link to="/" className="block">
-              <div className={`flex items-center gap-4 px-4 py-3 hover:text-[#fe570b] transition-colors ${window.location.pathname === '/' ? 'text-[#fe570b]' : 'text-white'}`}>
-                <FiHome className="h-6 w-6" />
-                <span className="text-lg">Feed</span>
-              </div>
-            </Link>
-            
-            <Link to="/dashboard/reported-cases" className="block">
-              <div className={`flex items-center gap-4 px-4 py-3 hover:text-[#fe570b] transition-colors ${window.location.pathname === '/dashboard/reported-cases' ? 'text-[#fe570b]' : 'text-white'}`}>
-                <FiFileText className="h-6 w-6" />
-                <span className="text-lg">Reported Cases</span>
-              </div>
-            </Link>
-            
-            <Link to="/dashboard/abuse-form" className="block">
-              <div className={`flex items-center gap-4 px-4 py-3 hover:text-[#fe570b] transition-colors ${window.location.pathname === '/dashboard/abuse-form' ? 'text-[#fe570b]' : 'text-white'}`}>
-                <FiFilePlus className="h-6 w-6" />
-                <span className="text-lg">Submit your statement</span>
-              </div>
-            </Link>
-            
-            {/* Admin Panel Link - Now visible to all users */}
-            <Link to="/dashboard/admin" className="block">
-              <div className={`flex items-center gap-4 px-4 py-3 hover:text-[#fe570b] transition-colors ${window.location.pathname === '/dashboard/admin' ? 'text-[#fe570b]' : 'text-white'}`}>
-                <FiShield className="h-6 w-6" />
-                <span className="text-lg">Admin Panel</span>
-              </div>
-            </Link>
-            
-            <Link to="/" className="block">
-              <div className={`flex items-center gap-4 px-4 py-3 hover:text-[#fe570b] transition-colors ${window.location.pathname === '/' ? 'text-[#fe570b]' : 'text-white'}`}>
-                <FiInfo className="h-6 w-6" />
-                <span className="text-lg">About Us</span>
-              </div>
-            </Link>
-          </div>
-        </div>
-        
-        {/* Logout Button (only show if logged in) */}
-        {isLoggedIn() && (
-          <div className="px-4">
-            <button 
-              onClick={handleLogout}
-              className="flex items-center gap-4 px-4 py-3 text-white hover:text-[#fe570b] transition-colors w-full"
-            >
-              <FiLogOut className="h-6 w-6" />
-              <span className="text-lg">Logout</span>
-            </button>
-          </div>
-        )}
+    <div className="flex flex-col md:flex-row bg-black min-h-screen overflow-hidden text-white">
+      {/* Sidebar - hidden on mobile by default, controlled by state */}
+      <div className="hidden md:block">
+        <Aside />
+      </div>
+      
+      {/* Mobile sidebar toggle button - only visible on small screens */}
+      <div className="md:hidden fixed bottom-4 right-4 z-50">
+        <button 
+          onClick={() => {
+            // This assumes drawer is controlled in GlobalContext or similar
+            // You might need to implement this toggle functionality
+            if (drawer && typeof drawer.toggle === 'function') {
+              drawer.toggle();
+            }
+          }}
+          className="bg-[#fe570b] text-white p-3 rounded-full shadow-lg"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
       </div>
       
       {/* Main Content - Scrollable */}
-      <div className="flex-1 h-screen overflow-y-auto">
-        <div className="p-4">
+      <div className="flex-1 h-screen overflow-y-auto w-full">
+        {/* Add Dashboard Navbar for user profile */}
+        {isLoggedIn() && <DashboardNavbar />}
+        
+        <div className="p-3 sm:p-4">
           {/* Top Login/Sign Up Button */}
-          <div className="flex justify-end mb-8">
+          <div className="flex justify-end mb-4 sm:mb-8">
             {!isLoggedIn() && (
               <Link to="/auth">
-                <button className="bg-[#333335] px-6 py-2 rounded-full text-white hover:bg-[#444446] transition-colors">
+                <button className="bg-[#333335] px-4 sm:px-6 py-1 sm:py-2 rounded-full text-white text-sm sm:text-base hover:bg-[#444446] transition-colors">
                   login/sign up
                 </button>
               </Link>
@@ -1265,18 +1250,18 @@ const FeedPage = () => {
           </div>
           
           {/* Main Content Header */}
-          <h1 className="text-4xl font-bold mb-10 text-center text-[#fe570b]">Anonymous Reports Feed</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-10 text-center text-[#fe570b]">Anonymous Reports Feed</h1>
           
           {/* Feed Content */}
-          <div className="max-w-4xl mx-auto pb-12">
+          <div className="w-full max-w-4xl mx-auto pb-8 sm:pb-12">
             {/* Refresh button */}
             <div className="flex justify-end mb-4">
               <button 
                 onClick={refreshFeed}
-                className="flex items-center gap-2 bg-[#333335] hover:bg-[#444446] text-white px-4 py-2 rounded-md transition-colors"
+                className="flex items-center gap-1 sm:gap-2 bg-[#333335] hover:bg-[#444446] text-white px-3 sm:px-4 py-1 sm:py-2 rounded-md transition-colors text-sm"
                 disabled={loading}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
                 </svg>
                 {loading ? "Refreshing..." : "Refresh Reports"}
@@ -1285,7 +1270,7 @@ const FeedPage = () => {
             
             {/* Loading state */}
             {loading ? (
-              <div className="flex justify-center items-center py-20">
+              <div className="flex justify-center items-center py-12 sm:py-20">
                 <Spin size="large" tip="Loading anonymous reports..." />
               </div>
             ) : (
@@ -1294,25 +1279,27 @@ const FeedPage = () => {
                 {feedData.length === 0 ? (
                   <Empty 
                     description={<span className="text-gray-400">No anonymous reports available yet</span>}
-                    className="py-20 bg-[#222224] rounded-2xl"
+                    className="py-12 sm:py-20 bg-[#222224] rounded-2xl"
                   />
                 ) : (
                   /* Feed items */
-                  <div className="space-y-6">
+                  <div className="space-y-4 sm:space-y-6">
                     {feedData.map((report, index) => (
                       <FeedItem key={index} report={report} index={index} onDataUpdate={refreshFeed} />
                     ))}
                   </div>
                 )}
                 
-                {/* Call to action */}
-                <div className="mt-12 bg-[#222224] p-6 rounded-2xl text-center">
-                  <h2 className="text-2xl font-bold mb-3">Have something to report?</h2>
-                  <p className="text-gray-400 mb-4">Your identity will remain anonymous. Help create a safer environment for everyone.</p>
-                  <Link to={isLoggedIn() ? "/dashboard/abuse-form" : "/auth"} className="bg-[#fe570b] text-white px-6 py-3 rounded-lg inline-block hover:bg-[#e04e0a] transition-colors">
-                    Submit Anonymous Report
-                  </Link>
-                </div>
+                {/* Call to action - only shown for non-admin users, more responsive */}
+                {!isAdmin() && (
+                  <div className="mt-8 sm:mt-12 bg-[#222224] p-4 sm:p-6 rounded-2xl text-center">
+                    <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Have something to report?</h2>
+                    <p className="text-gray-400 text-sm sm:text-base mb-3 sm:mb-4">Your identity will remain anonymous. Help create a safer environment for everyone.</p>
+                    <Link to={isLoggedIn() ? "/dashboard/abuse-form" : "/auth"} className="bg-[#fe570b] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg inline-block text-sm sm:text-base hover:bg-[#e04e0a] transition-colors">
+                      Submit Anonymous Report
+                    </Link>
+                  </div>
+                )}
               </>
             )}
           </div>

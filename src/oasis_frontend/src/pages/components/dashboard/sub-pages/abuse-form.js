@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { DatePicker, Tooltip, Select, Checkbox, Empty, Button, Result, ConfigProvider } from 'antd';
+import { DatePicker, Tooltip, Select, Checkbox, Empty, Button, Result, ConfigProvider, Tag } from 'antd';
 import { AiOutlineCheckCircle, AiOutlineInfoCircle } from 'react-icons/ai'
 import { CheckCircleFilled } from '@ant-design/icons';
 import Dragger from 'antd/es/upload/Dragger';
@@ -21,7 +21,9 @@ const AbuseForm = () => {
     const [policyAgreed, setPolicyAgreed] = useState(false);
     const [submitBtnDisabled, setSubmitBtnDisabled] = useState(true);
     const [incidentTitle, setIncidentTitle] = useState('');
-    const [incidentType, setIncidentType] = useState('');
+    const [incidentType, setIncidentType] = useState([]);
+    const [customTag, setCustomTag] = useState('');
+    const [location, setLocation] = useState('');
 
     useEffect(() => {
         if (!isMounted.current) {
@@ -76,12 +78,13 @@ const AbuseForm = () => {
         var fdata = {
             id: getRandomInt(111111, 999999),
             incidentTitle: incidentTitle || "Anonymous Report",
-            incidentType: incidentType || "Whistleblower Report",
+            incidentType: incidentType.length > 0 ? incidentType.join(', ') : "Whistleblower Report",
             description: description,
             evidences: fileString,
             submittedOn: submittedOn,
             status: "pending",
-            organization: "Corporate Entity" // Default value for corporate reports
+            organization: "Corporate Entity", // Default value for corporate reports
+            location: location || "Not specified" // Add location field
         }
         
         // Handle different authentication methods
@@ -193,103 +196,233 @@ const AbuseForm = () => {
         }
         
         //get user's previous abuse reports from backend
+        console.log("🔍 Getting user data for submission with phone:", Storage.user.get.phone);
         var userData = oasis_backend.getUser(Storage.user.get.phone);
         message.loading("Processing report...", 120);
         userData.then(data => {
+            console.log("🔍 Raw user data received:", data);
+            
             if (!data || data.length === 0) {
                 message.error("Could not retrieve user data. Please try again.");
                 return;
             }
             
             data.forEach((value, index) => {
+                console.log(`🔍 Processing user data ${index}:`, value);
+                
                 delete value.id;
                 delete value.userData;
                 delete value.phone;
                 delete value.token;
-                //check if user has already reported an abuse case
-                if (value.reportedAbuseCases.length > 0) {
-                    //user has reported abuse cases
-                    var reportedAbuseCases = JSON.parse(value.reportedAbuseCases);
-                    
-                    //user has not reported this abuse case
-                    data.id = Number(data.id);
-                    reportedAbuseCases.push(fdata);
-                    console.table(reportedAbuseCases);
-                    console.table(data);
-                    var resp = oasis_backend.updateReportedAbuseCases(Storage.user.get.phone, JSON.stringify(reportedAbuseCases));
-                    resp.then(data => {
-                        data = JSON.parse(data);
-                        message.destroy();
-                        if (data.status == 200) {
-                            updatePageSection('upload-success');
-                        } else {
-                            message.error('Failed to submit report!');
-                        }
-                    })
+                
+                // Check if user has already reported an abuse case
+                console.log("🔍 Report data to save:", fdata);
+                
+                if (value.reportedAbuseCases && value.reportedAbuseCases.length > 0) {
+                    // User has reported abuse cases
+                    try {
+                        var reportedAbuseCases = JSON.parse(value.reportedAbuseCases);
+                        console.log("✅ Existing reported cases:", reportedAbuseCases);
+                        
+                        // User has not reported this abuse case
+                        data.id = Number(data.id);
+                        reportedAbuseCases.push(fdata);
+                        console.log("✅ Updated reported cases:", reportedAbuseCases);
+                        
+                        var resp = oasis_backend.updateReportedAbuseCases(Storage.user.get.phone, JSON.stringify(reportedAbuseCases));
+                        resp.then(data => {
+                            data = JSON.parse(data);
+                            message.destroy();
+                            console.log("✅ Backend response after update:", data);
+                            if (data.status == 200) {
+                                console.log("✅ Report submitted successfully");
+                                updatePageSection('upload-success');
+                            } else {
+                                console.error("🚫 Failed to submit report:", data);
+                                message.error('Failed to submit report!');
+                            }
+                        }).catch(err => {
+                            console.error("🚫 Error updating reported cases:", err);
+                            message.error("Failed to update report data. Please try again.");
+                        });
+                    } catch (err) {
+                        console.error("🚫 Error parsing existing reported cases:", err);
+                        message.error("Failed to process existing report data. Please try again.");
+                    }
                 } else {
-                    //user has not reported any abuse cases
+                    // User has not reported any abuse cases
+                    console.log("🔍 No existing reports, creating first one");
                     var reportedAbuseCases = [];
                     reportedAbuseCases.push(fdata);
+                    
+                    console.log("✅ New reported cases:", reportedAbuseCases);
                     var resp = oasis_backend.updateReportedAbuseCases(Storage.user.get.phone, JSON.stringify(reportedAbuseCases));
                     resp.then(data => {
                         data = JSON.parse(data);
+                        console.log("✅ Backend response after update:", data);
                         if (data.status == 200) {
                             message.destroy();
+                            console.log("✅ Report submitted successfully");
                             updatePageSection('upload-success');
                         } else {
+                            console.error("🚫 Failed to submit report:", data);
                             message.error('Failed to submit report!');
                         }
-                    })
+                    }).catch(err => {
+                        console.error("🚫 Error creating first report:", err);
+                        message.error("Failed to save report data. Please try again.");
+                    });
                 }
-            })
+            });
         }).catch(err => {
             message.destroy();
+            console.error("🚫 Backend error:", err);
             message.error("Error connecting to the backend. Please try again.");
-            console.error("Backend error:", err);
         });
     }
 
     const handleFileChange = (e) => {
         setFileString(false);
-        //get  multiple image files and convert them to base64 string and set it to state as object {filename: imgName, file: base64String, type: imgType}
+        //get multiple image files and convert them to base64 string and set it to state as object {filename: imgName, file: base64String, type: imgType}
         var files = e.target.files;
         var fileArr = [];
-        //max 5 files
-        if (files.length > 5) {
-            message.error('Maximum 5 files are allowed');
+        
+        // Keep maximum files at 3
+        if (files.length > 3) {
+            message.error('Maximum 3 files are allowed');
             //clear file input
             e.target.value = null;
             return;
         }
 
-        for (var i = 0; i < files.length; i++) {
-            //check if file is image
-            if (!files[i].type.includes('image')) {
-                message.error('Only image files are allowed');
-                //clear file input
-                e.target.value = null;
-                return;
-            }
-            //check if file size is greater than 3mb
-            if (files[i].size > 1000000) {
-                message.error('Each file size should be less than 1mb');
-                //clear file input
-                e.target.value = null;
-                return;
-            }
-            var file = files[i];
-            var reader = new FileReader();
-            reader.onload = (e) => {
-                var fileObj = {
-                    filename: file.name,
-                    file: e.target.result,
-                    type: file.type
+        // Track total size of all files
+        let totalSize = 0;
+        
+        // Process each file
+        const processFiles = async () => {
+            for (var i = 0; i < files.length; i++) {
+                //check if file is image
+                if (!files[i].type.includes('image') || 
+                    !['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(files[i].type)) {
+                    message.error('Only JPG, PNG and WEBP image files are allowed');
+                    //clear file input
+                    e.target.value = null;
+                    return;
                 }
-                fileArr.push(fileObj);
-                setFileString(fileArr);
+                
+                // Increased file size limit to 2MB per file
+                if (files[i].size > 2000000) {
+                    message.error('Each file size should be less than 2MB');
+                    //clear file input
+                    e.target.value = null;
+                    return;
+                }
+                
+                // Update total size
+                totalSize += files[i].size;
             }
-            reader.readAsDataURL(file);
-        }
+            
+            // Increased total size limit to 3MB
+            if (totalSize > 3000000) {
+                message.error('Total file size should be less than 3MB');
+                e.target.value = null;
+                return;
+            }
+            
+            // Process files after validation
+            for (var i = 0; i < files.length; i++) {
+                const file = files[i];
+                await compressAndProcessImage(file, fileArr);
+            }
+        };
+        
+        // Enhanced compression function
+        const compressAndProcessImage = (file, fileArr) => {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        // Create canvas for compression
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // More aggressive downsizing of large images
+                        const maxDimension = 800; // Reduced from 1000
+                        if (width > height && width > maxDimension) {
+                            height = Math.round((height * maxDimension) / width);
+                            width = maxDimension;
+                        } else if (height > maxDimension) {
+                            width = Math.round((width * maxDimension) / height);
+                            height = maxDimension;
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        // Draw and compress
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Get compressed image as base64 string with lower quality
+                        let compressedDataUrl;
+                        // Determine appropriate quality based on original file size
+                        let compressionQuality = 0.7; // Default
+                        
+                        if (file.size > 1000000) {
+                            compressionQuality = 0.5; // More compression for larger files
+                        }
+                        
+                        if (file.type === 'image/png') {
+                            compressedDataUrl = canvas.toDataURL('image/jpeg', compressionQuality); // Convert PNG to JPEG for better compression
+                        } else {
+                            compressedDataUrl = canvas.toDataURL('image/jpeg', compressionQuality);
+                        }
+                        
+                        // Check compressed size and reduce further if needed
+                        if (compressedDataUrl.length > 700000) { // ~700KB limit per file after compression
+                            // Compress again with lower quality
+                            compressedDataUrl = canvas.toDataURL('image/jpeg', 0.4);
+                            
+                            // If still too large, resize the canvas and try again
+                            if (compressedDataUrl.length > 700000) {
+                                const scaleFactor = 0.7;
+                                canvas.width = width * scaleFactor;
+                                canvas.height = height * scaleFactor;
+                                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                                compressedDataUrl = canvas.toDataURL('image/jpeg', 0.4);
+                            }
+                        }
+                        
+                        // Create file object with size tracking
+                        const fileObj = {
+                            filename: file.name,
+                            file: compressedDataUrl,
+                            type: 'image/jpeg', // Standardize to jpeg for consistency
+                            originalSize: file.size,
+                            compressedSize: Math.round(compressedDataUrl.length * 0.75) // Approximate byte size
+                        };
+                        
+                        console.log(`Compressed ${file.name} from ${Math.round(file.size/1024)}KB to approximately ${Math.round(fileObj.compressedSize/1024)}KB`);
+                        
+                        // Add to array and update state
+                        fileArr.push(fileObj);
+                        setFileString([...fileArr]);
+                        resolve();
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        };
+        
+        // Start processing files
+        processFiles().catch(error => {
+            console.error("Error processing files:", error);
+            message.error("Error processing files. Please try again.");
+            e.target.value = null;
+        });
     };
     
     return (
@@ -321,23 +454,89 @@ const AbuseForm = () => {
                                 
                                 <div className='flex flex-col gap-3 w-[80%]'>
                                     <div className='font-semibold'>Report Type (optional)</div>
-                                    <Select
-                                        name='incidentType'
-                                        placeholder="Select report type"
-                                        options={[
-                                            { value: 'Fraud', label: 'Fraud' },
-                                            { value: 'Corruption', label: 'Corruption' },
-                                            { value: 'Harassment', label: 'Harassment' },
-                                            { value: 'Discrimination', label: 'Discrimination' },
-                                            { value: 'Safety Violation', label: 'Safety Violation' },
-                                            { value: 'Environmental Issue', label: 'Environmental Issue' },
-                                            { value: 'Ethics Violation', label: 'Ethics Violation' },
-                                            { value: 'Other', label: 'Other' }
-                                        ]}
-                                        size='large'
-                                        value={incidentType || null}
-                                        onChange={e => setIncidentType(e)}
-                                        className='w-full'
+                                    <div className='flex flex-wrap gap-2 mb-2'>
+                                        {[
+                                            { value: 'torture', label: '#torture' },
+                                            { value: 'bullying', label: '#bullying' },
+                                            { value: 'corporate office', label: '#corporate office' },
+                                            { value: 'salary', label: '#salary' },
+                                            { value: 'harassment', label: '#harassment' },
+                                            { value: 'discrimination', label: '#discrimination' },
+                                            { value: 'ethics', label: '#ethics' },
+                                            { value: 'safety', label: '#safety' },
+                                            { value: 'fraud', label: '#fraud' }
+                                        ].map(tag => (
+                                            <Tag 
+                                                key={tag.value}
+                                                className={`px-3 py-1 text-sm cursor-pointer ${incidentType.includes(tag.label) ? 'bg-[#fe570b] text-white' : 'bg-[#333333] hover:bg-[#444444]'}`}
+                                                onClick={() => {
+                                                    // Toggle tag selection
+                                                    if(incidentType.includes(tag.label)) {
+                                                        setIncidentType(incidentType.filter(t => t !== tag.label));
+                                                    } else {
+                                                        setIncidentType([...incidentType, tag.label]);
+                                                    }
+                                                }}
+                                            >
+                                                {tag.label}
+                                            </Tag>
+                                        ))}
+                                    </div>
+                                    <div className="flex">
+                                        <input 
+                                            type="text"
+                                            placeholder="Or type your own custom tag"
+                                            className='flex-1 border-2 rounded-l-md focus:outline-none bg-[#222222] border-transparent focus:border-[#333333] px-3 py-2'
+                                            value={customTag}
+                                            onChange={e => {
+                                                setCustomTag(e.target.value);
+                                            }}
+                                        />
+                                        <button 
+                                            type="button"
+                                            className='bg-[#333333] rounded-r-md px-3 hover:bg-[#444444]'
+                                            onClick={() => {
+                                                if(customTag.trim()) {
+                                                    const newTag = customTag.startsWith('#') ? customTag : `#${customTag}`;
+                                                    if(!incidentType.includes(newTag)) {
+                                                        setIncidentType([...incidentType, newTag]);
+                                                        setCustomTag('');
+                                                    }
+                                                }
+                                            }}
+                                        >
+                                            Add
+                                        </button>
+                                    </div>
+                                    {incidentType.length > 0 && (
+                                        <div className="mt-2">
+                                            <div className="text-xs text-gray-400 mb-1">Selected tags:</div>
+                                            <div className="flex flex-wrap gap-1">
+                                                {incidentType.map((tag, index) => (
+                                                    <Tag 
+                                                        key={index}
+                                                        className="bg-[#fe570b] text-white px-2 py-1"
+                                                        closable
+                                                        onClose={() => {
+                                                            setIncidentType(incidentType.filter(t => t !== tag));
+                                                        }}
+                                                    >
+                                                        {tag}
+                                                    </Tag>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                                
+                                <div className='flex flex-col gap-3 w-[80%]'>
+                                    <div className='font-semibold'>Location (optional)</div>
+                                    <input 
+                                        value={location} 
+                                        onChange={e => setLocation(e.target.value)} 
+                                        name='location' 
+                                        placeholder='Enter the location where the incident occurred' 
+                                        className='border-2 rounded-md focus:outline-none bg-[#222222] border-transparent focus:border-[#333333] px-3 py-2' 
                                     />
                                 </div>
                                 
@@ -364,7 +563,7 @@ const AbuseForm = () => {
                                         placeholder='Upload Evidence' 
                                         className='border-2 rounded-md focus:outline-none bg-[#222222] border-transparent focus:border-[#333333] px-3 py-2' 
                                     />
-                                    <p className='text-[12px] text-[#fe570b]'>Supported file types: <span className='uppercase'>png, jpg, jpeg, webp</span> (Max 1 MB)</p>
+                                    <p className='text-[12px] text-[#fe570b]'>Supported file types: <span className='uppercase'>png, jpg, jpeg, webp</span> (Max 2MB per file, 3MB total)</p>
                                 </div>
                                 
                                 <div name='legals' className='flex flex-col gap-3 w-[80%]'>
@@ -396,7 +595,7 @@ const AbuseForm = () => {
                                 </span>
                             }
                         >
-                            <Link to="/dashboard"><button type="submit" class="bg-[#fe570b] text-white font-semibold rounded-md py-2 px-4 uppercase">UPDATE personal INFO</button></Link>
+                            <Link to="/dashboard"><button type="submit" class="bg-[#fe570b] text-white font-semibold rounded-md py-2 px-4 uppercase">UPDATE PROFILE INFO</button></Link>
                         </Empty>
                     </div>
                 </>
@@ -405,14 +604,19 @@ const AbuseForm = () => {
                         <Result
                             status={'success'}
                             title={'Your Statement has been submitted successfully!'}
-                            subTitle={'Your report has been securely submitted. Thank you for your courage in reporting this incident. We will review your information and take appropriate action.'}
+                            subTitle={
+                                <div>
+                                    <p>Your report has been securely submitted. Thank you for your courage in reporting this incident. We will review your information and take appropriate action.</p>
+                                    <p className="mt-2 text-[#fe570b]">Note: You may need to click the "Refresh Data" button on the Reported Cases page to see your new submission.</p>
+                                </div>
+                            }
                             icon={<CheckCircleFilled className='text-[#0f1629]' />}
                             extra={[
                                 <>
-                                    <Link to='/dashboard'>
-                                        <button className='px-4 bg-[#fe570b] text-white py-2 rounded-lg'>Go to Dashboard</button>
+                                    <Link to='/dashboard/reported-cases'>
+                                        <button className='px-4 bg-[#fe570b] text-white py-2 rounded-lg'>Go to Reported Cases</button>
                                     </Link>
-                                    <Link to='/dashboard/reported-cases'><button className='py-2 ml-4 px-4 hover:border-[#fe570b] text-white border-2 rounded-lg duration-300 ease-in-out' key="buy">View your reported cases</button></Link>
+                                    <Link to='/feed'><button className='py-2 ml-4 px-4 hover:border-[#fe570b] text-white border-2 rounded-lg duration-300 ease-in-out' key="buy">View Public Feed</button></Link>
                                 </>]}
                         />
                     </div>
