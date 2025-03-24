@@ -1,4 +1,5 @@
 # FearlessVoice
+##deployement Link : ** https://phlrf-ayaaa-aaaai-atgjq-cai.icp0.io/
 <img width="1470" alt="Screenshot 2025-03-24 at 03 38 51" src="https://github.com/user-attachments/assets/8ac7cc7c-67c8-493c-b0ea-a5a35647ccd7" />
 
 <p align="center">
@@ -220,7 +221,7 @@ FearlessVoice utilizes Internet Computer's authentication methods for secure acc
 The application is deployed on the Internet Computer mainnet:
 
 - **Frontend Canister:** https://phlrf-ayaaa-aaaai-atgjq-cai.icp0.io/
-- **Backend Canister:** https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=pakxr-naaaa-aaaai-atgja-cai  (for cross verification ,for hackthebloxk judges )
+- **Backend Canister:** https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=pakxr-naaaa-aaaai-atgja-cai  (for cross verification ,for hacktheblock judges )
 
 
 
@@ -284,12 +285,9 @@ fearlessvoice/
 ### Project Correspondence
 
 - **Project Name:** FearlessVoice
-- **Contact Email:** contact@fearlessvoice.org
 - **GitHub Repository:** [https://github.com/your-username/fearlessvoice](https://github.com/your-username/fearlessvoice)
 
-### Deployment Information
 
-- **ICP Mainnet:** [https://qdbb6-taaaa-aaaan-qetfa-cai.icp0.io](https://qdbb6-taaaa-aaaan-qetfa-cai.icp0.io)
 
 ### Bug Reporting
 
@@ -308,6 +306,4 @@ We welcome contributions from the community! Please follow these steps:
 3. Make your changes
 4. Submit a pull request
 
-## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
