@@ -220,6 +220,7 @@ FearlessVoice utilizes Internet Computer's authentication methods for secure acc
 The application is deployed on the Internet Computer mainnet:
 
 - **Frontend Canister:** https://phlrf-ayaaa-aaaai-atgjq-cai.icp0.io/
+- **Backend Canister:** https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=pakxr-naaaa-aaaai-atgja-cai  (for cross verification ,for hackthebloxk judges )
 
 
 
