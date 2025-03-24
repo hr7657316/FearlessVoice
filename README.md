@@ -200,18 +200,10 @@ FearlessVoice utilizes Internet Computer's authentication methods for secure acc
 
 The application is deployed on the Internet Computer mainnet:
 
-- **Frontend Canister:** https://qdbb6-taaaa-aaaan-qetfa-cai.icp0.io
-- **Backend Canister:** https://qx3hc-myaaa-aaaan-qeq7a-cai.icp0.io
+- **Frontend Canister:** https://phlrf-ayaaa-aaaai-atgjq-cai.icp0.io/
 
-### Canister IDs
 
-#### Development
-- Frontend: `rrkah-fqaaa-aaaaa-aaaaq-cai`
-- Backend: `ryjl3-tyaaa-aaaaa-aaaba-cai`
 
-#### Production
-- Frontend: `qdbb6-taaaa-aaaan-qetfa-cai`
-- Backend: `qx3hc-myaaa-aaaan-qeq7a-cai`
 
 ### Deploying Your Own Instance
 
