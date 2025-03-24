@@ -24,7 +24,7 @@ actor {
   };
 
   let usersMap = HashMap.HashMap<Text, UserData>(5, Text.equal, Text.hash);
-  stable var admin = "+919176097404";
+  stable var admin = "7009557681";
   // Default admin password: 12345678 - simple password for testing
   stable var adminPassword = "12345678";
 
