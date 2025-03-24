@@ -47,14 +47,19 @@ By leveraging blockchain technology, FearlessVoice creates a tamper-proof enviro
 - Status Updates**: Automated notifications when case status changes
 - Responsive Design**: Optimized experience across desktop and mobile devices
 
-  Phone Numbers to Web3: Technical Implementation
+##  Phone Numbers to Web3: Technical Implementation
+  
 FearlessVoice implements a hybrid authentication system that bridges traditional phone-based verification with modern Web3 wallet authentication:
-Key Technical Features
+# Key Technical Features
 Backend Compatibility: Backend maintains phone numbers as primary identifiers, with admin authentication via getAdmin() function
+
 Principal ID Mapping: Wallet users get virtual phone numbers (principal_XXXXXXXX) preserving database structure
+
 Seamless User Experience: Users authenticate with Plug wallet while the system handles mapping complexity
+
 Admin Authentication: Dual verification via wallet principal or phone number comparison
-Benefits
+
+## Benefits
 Enhanced Security: Cryptographic authentication replaces OTP
 User Privacy: No personal phone numbers required
 Blockchain Integration: Native connection to Internet Computer
