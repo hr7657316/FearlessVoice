@@ -37,15 +37,29 @@ By leveraging blockchain technology, FearlessVoice creates a tamper-proof enviro
 
 ## Features
 
-- **Secure Reporting Form**: Structured, user-friendly interface for reporting incidents
-- **Case Tracking**: Real-time status updates for submitted reports
-- **Admin Dashboard**: Authorized personnel can review and update case status
-- **Blockchain Security**: All data is securely stored on the Internet Computer blockchain
-- **Anonymous Reporting**: Options for users to maintain anonymity while still receiving support
-- **Decentralized Authentication**: Secure login using Internet Computer's identity system
-- **Evidence Repository**: Secure storage for documentation and supporting materials
-- **Status Updates**: Automated notifications when case status changes
-- **Responsive Design**: Optimized experience across desktop and mobile devices
+- Secure Reporting Form**: Structured, user-friendly interface for reporting incidents
+- Case Tracking**: Real-time status updates for submitted reports
+- Admin Dashboard**: Authorized personnel can review and update case status
+- Blockchain Security**: All data is securely stored on the Internet Computer blockchain
+- Anonymous Reporting**: Options for users to maintain anonymity while still receiving support
+- Decentralized Authentication**: Secure login using Internet Computer's identity system
+- Evidence Repository**: Secure storage for documentation and supporting materials
+- Status Updates**: Automated notifications when case status changes
+- Responsive Design**: Optimized experience across desktop and mobile devices
+
+  Phone Numbers to Web3: Technical Implementation
+FearlessVoice implements a hybrid authentication system that bridges traditional phone-based verification with modern Web3 wallet authentication:
+Key Technical Features
+Backend Compatibility: Backend maintains phone numbers as primary identifiers, with admin authentication via getAdmin() function
+Principal ID Mapping: Wallet users get virtual phone numbers (principal_XXXXXXXX) preserving database structure
+Seamless User Experience: Users authenticate with Plug wallet while the system handles mapping complexity
+Admin Authentication: Dual verification via wallet principal or phone number comparison
+Benefits
+Enhanced Security: Cryptographic authentication replaces OTP
+User Privacy: No personal phone numbers required
+Blockchain Integration: Native connection to Internet Computer
+Technical Evolution: Demonstrates forward-thinking application design while maintaining stability
+This hybrid approach showcases both our technical adaptability and commitment to blockchain-native solutions.
 
 ## Tech Stack
 
