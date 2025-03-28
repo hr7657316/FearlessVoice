@@ -281,12 +281,6 @@ fearlessvoice/
 └── README.md                        # Project documentation
 ```
 
-## Contact
-
-### Project Correspondence
-
-- **Project Name:** FearlessVoice
-- **GitHub Repository:** [https://github.com/your-username/fearlessvoice](https://github.com/your-username/fearlessvoice)
 
 
 
